@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a production-ready Next.js 15 template with comprehensive AWS infrastructure, designed for scalable web applications with Google Analytics, AdSense integration, and modern web development tools.
 
+## Project Context
+
+This is Jimmy Pocock's personal website built with Next.js and AWS infrastructure. The site includes:
+- Personal/professional information pages
+- Thoughts/articles system for writing and publishing content
+- Google Analytics and AdSense integration
+- Privacy-compliant cookie consent management
+- An old static site preserved in the `old_site/` directory for reference
+
 ## Development Commands
 
 ### Core Development
@@ -33,6 +42,12 @@ This is a production-ready Next.js 15 template with comprehensive AWS infrastruc
 - `npm run status:all` - Check all stack deployment status
 - `npm run maintenance:on` - Enable maintenance mode
 - `npm run maintenance:off` - Disable maintenance mode
+
+### Todo Management
+- `npm run todo` - Show current todos
+- `npm run todo:add` - Add a new todo item
+- `npm run todo:complete` - Mark a todo as complete
+- `npm run todo:progress` - Update todo progress
 
 ## Architecture
 
@@ -62,6 +77,8 @@ The infrastructure uses a decoupled stack architecture (see `cdk/src/ARCHITECTUR
 
 - `app/` - Next.js App Router pages and layouts
 - `components/` - Reusable React components
+- `content/thoughts/` - Markdown files for thoughts/articles
+- `lib/` - Utility functions and helpers (includes thoughts system)
 - `cdk/` - AWS CDK infrastructure code (separate TypeScript project)
 - `scripts/` - Deployment and maintenance shell scripts
 - `public/` - Static assets including `ads.txt` and `sitemap.xml`
@@ -106,3 +123,45 @@ Update CSS variables in `app/globals.css` and `tailwind.config.ts`:
 - Uses Tailwind CSS with custom CSS variables for easy theme customization
 - Animated gradient orbs provide dynamic background effects
 - Theme toggle component supports light/dark modes
+
+## Testing
+Currently, no test framework is configured. When adding tests:
+- Consider Jest for unit tests
+- Use React Testing Library for component tests
+- Add Playwright or Cypress for E2E tests
+
+## Performance Considerations
+- Next.js 15 with Turbopack provides fast HMR in development
+- CloudFront CDN caching is configured for production
+- Images should be optimized using Next.js Image component
+- Bundle size monitoring can be added with `@next/bundle-analyzer`
+
+## Common Issues & Solutions
+
+### CDK Deployment Issues
+- If stacks fail to deploy, check `scripts/diagnose-stack.sh <stack-name>`
+- Ensure AWS credentials are configured: `aws sts get-caller-identity`
+- Stack deployment order matters - use `deploy:all` for correct sequencing
+
+### Local Development
+- Clear Next.js cache if seeing stale content: `rm -rf .next`
+- Ensure all environment variables are set in `.env`
+- CDK and Next.js are separate TypeScript projects - build CDK with `npm run build:cdk`
+
+## Migration from Old Site
+The `old_site/` directory contains the previous static HTML version. Key considerations:
+- Thoughts articles have been migrated to markdown format in `content/thoughts/`
+- Static assets (thinker.png) have been moved to `public/`
+- Privacy and terms pages have been recreated as Next.js pages
+
+## Thoughts/Articles System
+- Articles are stored as markdown files in `content/thoughts/`
+- Each file has frontmatter with title and date
+- The system automatically generates listing and individual pages
+- To add a new thought: create a `.md` file in `content/thoughts/` with proper frontmatter
+
+## Security Considerations
+- WAF is configured with rate limiting and geo-blocking
+- All secrets must be in environment variables, never committed
+- Security headers are applied via CloudFront Edge Functions
+- Content Security Policy is configured for XSS protection

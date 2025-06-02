@@ -4,7 +4,7 @@
 
 /* CSS Variables */
 :root {
-  --font-ui: var(--font-noto-sans), "Segoe UI", "Arial Unicode MS", system-ui, sans-serif;
+  --font-ui: var(--font-montserrat), Montserrat, Helvetica, Arial, sans-serif;
   --font-mono: "Courier New", "DejaVu Sans Mono", monospace;
 
   /* Font sizes for better readability */

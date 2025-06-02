@@ -1,44 +1,34 @@
 import type { Metadata } from "next";
-import { Noto_Sans, Noto_Serif } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import AdSenseScript from "@/components/AdSense/AdSenseScript";
 import GoogleCMP from "@/components/GoogleCMP";
 import GoogleConsentInit from "@/components/GoogleConsentInit";
-import ThemeToggle from "@/components/ThemeToggle";
 
-// Configure Noto Sans for UI text with phonetic support
-const notoSans = Noto_Sans({
-  subsets: ["latin", "latin-ext"],
+// Configure Montserrat font
+const montserrat = Montserrat({
+  subsets: ["latin"],
   weight: ["400", "600", "700"],
-  variable: "--font-noto-sans",
+  variable: "--font-montserrat",
   display: "swap",
   preload: true,
 });
 
-// Configure Noto Serif for optional use in content areas
-const notoSerif = Noto_Serif({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "700"],
-  variable: "--font-noto-serif",
-  display: "swap",
-  preload: false,
-});
-
 export const metadata: Metadata = {
-  title: "Your App Name | Professional Description",
-  description: "Description of your amazing application and what it does for users.",
-  keywords: "your, keywords, here, separated, by, commas",
+  title: "Jimmy Pocock",
+  description: "Developer, Thinker, Conversationalist",
+  keywords: "jimmy pocock, developer, austin, texas, roverpass, software engineer",
   openGraph: {
-    title: "Your App Name | Professional Description",
-    description: "Description of your amazing application and what it does for users.",
+    title: "Jimmy Pocock",
+    description: "Developer, Thinker, Conversationalist",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Your App Name | Professional Description",
-    description: "Description of your amazing application and what it does for users.",
+    title: "Jimmy Pocock",
+    description: "Developer, Thinker, Conversationalist",
   },
   robots: {
     index: true,
@@ -59,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSans.variable} ${notoSerif.variable}`}>
+    <html lang="en" className={montserrat.variable}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <GoogleConsentInit />
@@ -75,9 +65,9 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "Your App Name",
-              "description": "Description of your application and its purpose.",
-              "url": "https://yourdomain.com",
+              "name": "Jimmy Pocock",
+              "description": "Developer, Thinker, Conversationalist",
+              "url": "https://jimmypocock.com",
               "applicationCategory": "WebApplication",
               "operatingSystem": "Web Browser",
               "offers": {
@@ -87,22 +77,13 @@ export default function RootLayout({
               },
               "creator": {
                 "@type": "Organization",
-                "name": "Your Organization Name"
+                "name": "Jimmy Pocock"
               }
             })
           }}
         />
       </head>
-      <body className={notoSans.className}>
-        {/* Gradient orbs container to prevent overflow */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-          <div className="gradient-orb orb1" />
-          <div className="gradient-orb orb2" />
-          <div className="gradient-orb orb3" />
-          <div className="gradient-orb orb4" />
-        </div>
-        
-        <ThemeToggle />
+      <body className={montserrat.className}>
         {children}
         <GoogleCMP />
       </body>

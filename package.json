@@ -1,8 +1,8 @@
 {
-  "name": "nextjs-aws-template",
-  "version": "0.1.0",
+  "name": "jimmypocock.com",
+  "version": "1.0.0",
   "private": true,
-  "description": "A production-ready Next.js template with AWS CDK, Google Analytics, Google AdSense, and Tailwind CSS",
+  "description": "Jimmy Pocock's personal website",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -34,6 +34,7 @@
     "todo:progress": "./scripts/update-todos.sh progress"
   },
   "dependencies": {
+    "gray-matter": "^4.0.3",
     "next": "^15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
