@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a production-ready Next.js 15 template with comprehensive AWS infrastructure, designed for scalable web applications with Google Analytics, AdSense integration, and modern web development tools.
+This is a production-ready Next.js 15 template with comprehensive AWS infrastructure, designed for scalable web applications with Google Analytics and modern web development tools.
 
 ## Project Context
 
 This is Jimmy Pocock's personal website built with Next.js and AWS infrastructure. The site includes:
 - Personal/professional information pages
 - Thoughts/articles system for writing and publishing content
-- Google Analytics and AdSense integration
+- Google Analytics integration
 - Privacy-compliant cookie consent management
 - An old static site preserved in the `old_site/` directory for reference
 
@@ -70,7 +70,6 @@ The infrastructure uses a decoupled stack architecture (see `cdk/src/ARCHITECTUR
 
 ### Google Integrations
 - **Google Analytics** with consent management (`components/GoogleAnalytics.tsx`)
-- **Google AdSense** with privacy-compliant setup (`components/AdSense/`)
 - **Cookie Consent Management Platform** (`components/GoogleCMP.tsx`)
 
 ## Key Directories
@@ -81,13 +80,12 @@ The infrastructure uses a decoupled stack architecture (see `cdk/src/ARCHITECTUR
 - `lib/` - Utility functions and helpers (includes thoughts system)
 - `cdk/` - AWS CDK infrastructure code (separate TypeScript project)
 - `scripts/` - Deployment and maintenance shell scripts
-- `public/` - Static assets including `ads.txt` and `sitemap.xml`
+- `public/` - Static assets including `sitemap.xml`
 
 ## Environment Configuration
 
 Copy `.env.example` to `.env` and configure:
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics measurement ID
-- `NEXT_PUBLIC_ADSENSE_CLIENT_ID` - Google AdSense publisher ID
 - `AWS_REGION`, `AWS_ACCOUNT_ID`, `DOMAIN_NAME` - AWS deployment settings
 - `APP_NAME` - Application name for CDK stacks
 
@@ -101,10 +99,6 @@ Update CSS variables in `app/globals.css` and `tailwind.config.ts`:
 - `app/layout.tsx` - Site metadata, Open Graph, schema markup
 - `app/page.tsx` - Home page content
 - `package.json` - Project name and description
-
-### AdSense Setup
-- Update `public/ads.txt` with your Google AdSense publisher ID
-- Configure ad units in `components/AdSense/` components
 
 ## Development Notes
 

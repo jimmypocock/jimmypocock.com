@@ -13,10 +13,15 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         // Add your brand colors here
-        primary: "#9436eb",
+        primary: "#ff6100",
         secondary: "#2196f3", 
-        accent: "#ec4899",
+        accent: "#ff6100",
         neutral: "#9ca3af",
+      },
+      fontFamily: {
+        sans: ["var(--font-ui)", "sans-serif"],
+        serif: ["var(--font-content)", "serif"],
+        mono: ["var(--font-mono)", "monospace"],
       },
     },
   },

@@ -15,7 +15,6 @@ const app = new cdk.App();
 const domainName = process.env.DOMAIN_NAME || app.node.tryGetContext('domainName') || 'example.com';
 const appName = process.env.APP_NAME || app.node.tryGetContext('appName') || 'nextjs-app';
 const stackPrefix = process.env.STACK_PREFIX || app.node.tryGetContext('stackPrefix') || appName.toUpperCase().replace(/[^A-Z0-9]/g, '');
-const certificateArn = app.node.tryGetContext('certificateArn');
 const createCertificate = app.node.tryGetContext('createCertificate') === 'true';
 const notificationEmail = app.node.tryGetContext('notificationEmail');
 
@@ -35,8 +34,7 @@ const foundationStack = new FoundationStack(app, `${stackPrefix}-Foundation`, {
 // 2. Certificate Stack - ACM certificate management
 const certificateStack = new CertificateStack(app, `${stackPrefix}-Certificate`, {
   domainName: domainName,
-  certificateArn: certificateArn,
-  createCertificate: !certificateArn && createCertificate,
+  createCertificate: createCertificate,
   env: usEast1Env,
   description: `SSL/TLS certificate for ${appName}`,
 });

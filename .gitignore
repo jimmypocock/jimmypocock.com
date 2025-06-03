@@ -82,3 +82,6 @@ pids
 # temporary folders
 tmp/
 temp/
+
+# Private files
+.private/

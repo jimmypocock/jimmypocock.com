@@ -1,13 +1,56 @@
+# Robots.txt for jimmypocock.com
+# Allow all web crawlers
+
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
+# Specific rules for major search engines
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0
 
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# Google AdSense
 User-agent: AdsBot-Google
 Allow: /
 
 User-agent: Mediapartners-Google
 Allow: /
 
-Sitemap: https://yourdomain.com/sitemap.xml
+# Disallow specific bot behaviors
+User-agent: *
+Disallow: /api/
+Disallow: /_next/
+Disallow: /cdk/
+Disallow: /scripts/
+Disallow: /*.json$
+Disallow: /*?*utm_
+
+# Allow access to public assets
+Allow: /favicon.ico
+Allow: /thinker.png
+Allow: /*.css
+Allow: /*.js
+Allow: /*.jpg
+Allow: /*.png
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.webp
+
+# Sitemap location
+Sitemap: https://jimmypocock.com/sitemap.xml
+
+# Host preference
+Host: jimmypocock.com

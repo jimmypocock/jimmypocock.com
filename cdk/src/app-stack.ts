@@ -1,4 +1,4 @@
-import { Stack, StackProps, CfnOutput, Fn } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput, Fn, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
@@ -18,8 +18,8 @@ export class AppStack extends Stack {
     const websiteBucket = s3.Bucket.fromBucketName(this, 'ImportedWebsiteBucket', props.websiteBucketName);
 
     // Import distribution from CloudFormation exports
-    const distributionId = Fn.importValue('VTT-CDN-DistributionId');
-    const distributionDomainName = Fn.importValue('VTT-CDN-DistributionDomainName');
+    const distributionId = Fn.importValue(`${this.stackName.replace('-App', '-CDN')}-DistributionId`);
+    const distributionDomainName = Fn.importValue(`${this.stackName.replace('-App', '-CDN')}-DistributionDomainName`);
     
     const distribution = cloudfront.Distribution.fromDistributionAttributes(this, 'ImportedDistribution', {
       distributionId: distributionId,
@@ -27,20 +27,24 @@ export class AppStack extends Stack {
     });
 
     // Deploy site contents to S3
-    const nextBuildPath = path.join(__dirname, '../../out');
-    const isNextJSBuild = fs.existsSync(nextBuildPath);
+    // The project root is always the parent of the cdk directory
+    const cdkDir = path.resolve(__dirname.includes('/lib') ? path.join(__dirname, '../..') : path.join(__dirname, '..'));
+    const projectRoot = path.dirname(cdkDir);
+    const outPath = path.join(projectRoot, 'out');
+    
+    if (!fs.existsSync(outPath)) {
+      throw new Error(`Build output not found at ${outPath}. Please run 'npm run build' first.`);
+    }
     
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      sources: isNextJSBuild 
-        ? [s3deploy.Source.asset('../out')]      // NextJS static export
-        : [s3deploy.Source.asset('..', {         // Original index.html
-            exclude: ['*', '!index.html'],
-          })],
+      sources: [s3deploy.Source.asset(outPath)],
       destinationBucket: websiteBucket,
       distribution: distribution,
       distributionPaths: ['/*'],
       cacheControl: [
-        s3deploy.CacheControl.fromString('max-age=31536000,public,immutable'),
+        s3deploy.CacheControl.setPublic(),
+        s3deploy.CacheControl.maxAge(Duration.hours(1)),
+        s3deploy.CacheControl.fromString('s-maxage=31536000'),
       ],
       prune: true,
       retainOnDelete: false,

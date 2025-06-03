@@ -1,6 +1,6 @@
 # Next.js AWS Template
 
-A production-ready Next.js template with comprehensive AWS infrastructure, Google Analytics, Google AdSense, and modern web development tools.
+A production-ready Next.js template with comprehensive AWS infrastructure, Google Analytics, and modern web development tools.
 
 ## Features
 
@@ -14,7 +14,6 @@ A production-ready Next.js template with comprehensive AWS infrastructure, Googl
 ### 🔧 Google Integrations
 
 - **Google Analytics** with consent management
-- **Google AdSense** with privacy-compliant setup
 - **Cookie Consent Management Platform (CMP)**
 
 ### ☁️ AWS Infrastructure
@@ -122,9 +121,6 @@ Edit `.env` with your values:
 # Google Analytics
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
-# Google AdSense
-NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXXX
-
 # AWS Configuration
 AWS_REGION=us-east-1
 AWS_ACCOUNT_ID=123456789012
@@ -186,7 +182,6 @@ export const metadata: Metadata = {
 **4. Update Public Files**
 
 - `public/robots.txt`: Update sitemap URL to your domain
-- `public/ads.txt`: Add your Google AdSense publisher ID
 
 ### 5. Start Development
 
@@ -241,7 +236,6 @@ Update `app/layout.tsx`:
 
 - `app/page.tsx` - Home page
 - `app/about/page.tsx` - About page
-- `app/how-it-works/page.tsx` - Documentation
 - `app/privacy/page.tsx` - Privacy policy
 - `app/terms/page.tsx` - Terms of service
 
@@ -263,12 +257,6 @@ Update `package.json`:
 2. Copy your Measurement ID (G-XXXXXXXXXX)
 3. Update `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env`
 
-#### Google AdSense
-
-1. Apply for AdSense at [adsense.google.com](https://adsense.google.com)
-2. Get your Publisher ID (ca-pub-XXXXXXXXXXXXXXXXX)
-3. Update `NEXT_PUBLIC_ADSENSE_CLIENT_ID` in `.env`
-4. Update `public/ads.txt` with your Publisher ID
 
 ## AWS Deployment
 
@@ -353,11 +341,9 @@ npm run maintenance:off
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page
 │   ├── about/             # About page
-│   ├── how-it-works/      # Documentation
 │   ├── privacy/           # Privacy policy
 │   └── terms/             # Terms of service
 ├── components/            # Reusable React components
-│   ├── AdSense/           # Google AdSense components
 │   ├── GoogleAnalytics.tsx
 │   ├── GoogleCMP.tsx      # Cookie consent
 │   └── ThemeToggle.tsx
@@ -368,6 +354,35 @@ npm run maintenance:off
 ├── public/                # Static assets
 └── .env.example           # Environment variables template
 ```
+
+## Route Tree
+
+```
+/                          # Home page (minimal design with thinker.png background)
+├── /about                 # About Jimmy Pocock - personal story and achievements
+├── /thoughts              # Articles and insights listing page
+│   └── /thoughts/[slug]   # Individual article pages (29 markdown articles)
+├── /leadership            # Leadership & Impact (placeholder)
+├── /projects              # Technical Projects showcase
+├── /music                 # Music & Creativity portfolio (placeholder)
+├── /connect               # Contact and connection information
+├── /privacy               # Privacy policy
+└── /terms                 # Terms of service
+```
+
+### Content Overview
+
+- **Home (`/`)**: Minimal landing page with name, role, and key links
+- **About (`/about`)**: Personalized page about Jimmy's journey, values, and interests
+- **Thoughts (`/thoughts`)**: Collection of 29 articles on various topics including:
+  - Technology and philosophy
+  - Political commentary
+  - Social observations
+  - Personal reflections
+- **Leadership (`/leadership`)**: Placeholder for RoverPass case study and leadership content
+- **Projects (`/projects`)**: Showcases RoverPass, Vocal Technique Translator, and SongSnips
+- **Music (`/music`)**: Placeholder for music portfolio and studio information
+- **Connect (`/connect`)**: Professional contact information and availability
 
 ## Best Practices
 

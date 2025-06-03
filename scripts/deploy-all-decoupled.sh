@@ -40,7 +40,7 @@ fi
 # Check if certificate exists
 CERT_EXISTS=$(aws cloudformation describe-stacks --stack-name "$CERTIFICATE_STACK" --region us-east-1 2>&1 | grep -c "$CERTIFICATE_STACK" || true)
 
-if [ "$CERT_EXISTS" -eq 0 ] && [ -z "$CERTIFICATE_ARN" ]; then
+if [ "$CERT_EXISTS" -eq 0 ]; then
     echo ""
     echo "========================================="
     echo "2/6: Deploying Certificate Stack"

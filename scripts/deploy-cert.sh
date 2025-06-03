@@ -23,7 +23,7 @@ npm run build
 
 # Deploy only the certificate stack
 echo "☁️  Deploying certificate..."
-npx cdk deploy "$CERTIFICATE_STACK" --require-approval never "$@"
+npx cdk deploy "$CERTIFICATE_STACK" --require-approval never --context createCertificate=true "$@"
 
 cd ..
 

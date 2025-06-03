@@ -4,7 +4,8 @@
 
 /* CSS Variables */
 :root {
-  --font-ui: var(--font-montserrat), Montserrat, Helvetica, Arial, sans-serif;
+  --font-ui: var(--font-noto-sans), "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-content: var(--font-noto-serif), "Noto Serif", Georgia, serif;
   --font-mono: "Courier New", "DejaVu Sans Mono", monospace;
 
   /* Font sizes for better readability */
@@ -26,28 +27,28 @@
   --text-secondary: #31333e;
   --text-accent: #808495;
   --border-color: #e0e2e9;
-  --border-focus: #9436eb;
+  --border-focus: #ff6100;
 
   /*
    * BRAND COLOR PALETTE
    * Customize these colors for your brand.
    *
-   * Primary: #9436eb (Purple) - Main brand color, used for primary actions and branding
+   * Primary: #ff6100 (Orange) - Main brand color, used for primary actions and branding
    * Secondary: #2196f3 (Blue) - Secondary actions, links, and complementary elements
-   * Accent: #ec4899 (Pink) - Highlights, special features, and emphasis
+   * Accent: #ff6100 (Orange) - Highlights, special features, and emphasis
    * Neutral: #9ca3af (Gray-400) - Base neutral for text, borders, and backgrounds
    */
 
   /* Brand colors */
-  --primary: #9436eb;      /* Primary brand color */
-  --primary-hover: #7c2ecf;
+  --primary: #ff6100;      /* Primary brand color (Orange) */
+  --primary-hover: #e55500;
   --secondary: #2196f3;    /* Secondary brand color */
-  --accent: #ec4899;       /* Accent brand color */
+  --accent: #ff6100;       /* Accent brand color (Orange) */
   --neutral: #9ca3af;      /* Neutral brand color (gray-400) */
 
   /* Gradient backgrounds */
-  --gradient-bg: radial-gradient(circle at 30% 20%, #f3f4ff 0%, #fafbfc 40%, #ffffff 100%);
-  --orb-color: rgba(99, 102, 241, 0.4);
+  --gradient-bg: radial-gradient(circle at 30% 20%, #fff6f0 0%, #fafbfc 40%, #ffffff 100%);
+  --orb-color: rgba(255, 97, 0, 0.3);
 
   /* Shadows - Softer for light mode */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -59,25 +60,25 @@
 
 /* Dark mode colors */
 [data-theme="dark"] {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #0f0f17;
-  --bg-accent: #1a1a2e;
-  --text-primary: #fafafa;
+  --bg-primary: #090909;
+  --bg-secondary: #0f0f0f;
+  --bg-accent: #1a1a1a;
+  --text-primary: #ffffff;
   --text-secondary: #e0e0e0;
   --text-accent: #a3a8b8;
-  --border-color: #2a2a3e;
-  --border-focus: #9436eb;
+  --border-color: #2a2a2a;
+  --border-focus: #ff6100;
 
   /* Brand colors (same in dark mode for consistency) */
-  --primary: #9436eb;      /* Primary brand color */
-  --primary-hover: #7c2ecf;
+  --primary: #ff6100;      /* Primary brand color (Orange) */
+  --primary-hover: #e55500;
   --secondary: #2196f3;    /* Secondary brand color */
-  --accent: #ec4899;       /* Accent brand color */
+  --accent: #ff6100;       /* Accent brand color (Orange) */
   --neutral: #9ca3af;      /* Neutral brand color (gray-400) */
 
-  /* Gradient backgrounds - Purple theme */
-  --gradient-bg: radial-gradient(circle at 20% 50%, #1a1a2e 0%, #0a0a0a 50%);
-  --orb-color: rgba(147, 51, 234, 0.6);
+  /* Gradient backgrounds - Orange theme */
+  --gradient-bg: radial-gradient(circle at 20% 50%, #1a0f0a 0%, #090909 50%);
+  --orb-color: rgba(255, 97, 0, 0.5);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -103,7 +104,7 @@ html {
 }
 
 [data-theme="dark"] html {
-  background-color: #0a0a0a;
+  background-color: #090909;
 }
 
 body {
@@ -180,11 +181,11 @@ body::before {
   height: 400px;
   top: -10%;
   right: -200px;
-  background: radial-gradient(circle at center, rgba(147, 51, 234, 0.5) 0%, rgba(99, 102, 241, 0.3) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.4) 0%, rgba(255, 140, 0, 0.2) 50%, transparent 70%);
 }
 
 [data-theme="dark"] .orb1 {
-  background: radial-gradient(circle at center, rgba(217, 70, 239, 0.6) 0%, rgba(147, 51, 234, 0.4) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.5) 0%, rgba(255, 140, 0, 0.3) 50%, transparent 70%);
 }
 
 .orb2 {
@@ -192,11 +193,11 @@ body::before {
   height: 350px;
   bottom: -10%;
   left: -10%;
-  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.5) 0%, rgba(219, 39, 119, 0.3) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.3) 0%, rgba(255, 160, 0, 0.2) 50%, transparent 70%);
 }
 
 [data-theme="dark"] .orb2 {
-  background: radial-gradient(circle at center, rgba(251, 113, 133, 0.6) 0%, rgba(236, 72, 153, 0.4) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.4) 0%, rgba(255, 160, 0, 0.3) 50%, transparent 70%);
 }
 
 .orb3 {
@@ -205,12 +206,12 @@ body::before {
   top: 40%;
   left: 60%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.5) 0%, rgba(124, 58, 237, 0.3) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 120, 0, 0.3) 0%, rgba(255, 180, 0, 0.2) 50%, transparent 70%);
   animation-delay: -5s;
 }
 
 [data-theme="dark"] .orb3 {
-  background: radial-gradient(circle at center, rgba(196, 181, 253, 0.6) 0%, rgba(167, 139, 250, 0.4) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 120, 0, 0.4) 0%, rgba(255, 180, 0, 0.25) 50%, transparent 70%);
 }
 
 /* Additional orb for more effect */
@@ -219,12 +220,12 @@ body::before {
   height: 250px;
   bottom: 20%;
   right: -50px;
-  background: radial-gradient(circle at center, rgba(168, 85, 247, 0.5) 0%, rgba(139, 92, 246, 0.3) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.35) 0%, rgba(255, 200, 0, 0.2) 50%, transparent 70%);
   animation-delay: -15s;
 }
 
 [data-theme="dark"] .orb4 {
-  background: radial-gradient(circle at center, rgba(233, 213, 255, 0.6) 0%, rgba(192, 132, 252, 0.4) 50%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 97, 0, 0.45) 0%, rgba(255, 200, 0, 0.25) 50%, transparent 70%);
 }
 
 /* Simple fade in animation for modal */
@@ -310,12 +311,12 @@ textarea {
   @apply disabled:opacity-50 disabled:cursor-not-allowed;
   @apply min-h-[48px] min-w-[48px] text-base;
   background: var(--primary);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 14px rgba(255, 97, 0, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-hover);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 97, 0, 0.4);
   transform: translateY(-1px);
 }
 
@@ -371,17 +372,6 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Ad container styling */
-.ad-container {
-  @apply rounded-xl overflow-hidden backdrop-blur-sm;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="dark"] .ad-container {
-  background: rgba(26, 26, 46, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 /* Ensure text selection works everywhere */
 .select-text {
