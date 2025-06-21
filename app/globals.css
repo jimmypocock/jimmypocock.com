@@ -20,13 +20,13 @@
 
 /* Light mode colors (default) */
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #fafbfc;
-  --bg-accent: #f6f8fa;
-  --text-primary: #0e1117;
-  --text-secondary: #31333e;
-  --text-accent: #808495;
-  --border-color: #e0e2e9;
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2a2a2a;
+  --bg-accent: #333333;
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-accent: #a3a8b8;
+  --border-color: #3a3a3a;
   --border-focus: #ff6100;
 
   /*
@@ -100,11 +100,11 @@ html {
   overflow-x: hidden;
   overflow-y: scroll; /* Force scrollbar to always show */
   scrollbar-gutter: stable both-edges;
-  background-color: #ffffff;
+  background-color: #1e1e1e;
 }
 
 [data-theme="dark"] html {
-  background-color: #090909;
+  background-color: #1e1e1e;
 }
 
 body {
@@ -387,4 +387,289 @@ textarea, input {
   -moz-user-select: text !important;
   -ms-user-select: text !important;
   user-select: text !important;
+}
+
+/* Global Navigation Styles */
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 30px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.nav-logo {
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ff6b6b;
+  transition: width 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: white;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+/* Simple Page Fade Transition */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation to page containers, not nav */
+.home-container,
+.terminal,
+.main-container,
+.container {
+  animation: pageFadeIn 0.6s ease-out;
+}
+
+/* Page Transition Curtain Effect */
+.page-transition-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.curtain-slice {
+  flex: 1;
+  background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 50%, #1e1e1e 100%);
+  transform: translateY(-100%);
+  transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid #4ecdc4;
+}
+
+.curtain-slice::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #4ecdc4, transparent);
+  animation: scanline 2s linear infinite;
+  opacity: 0.3;
+}
+
+.curtain-slice::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(78, 205, 196, 0.03) 2px,
+    rgba(78, 205, 196, 0.03) 4px
+  );
+}
+
+@keyframes scanline {
+  to {
+    left: 100%;
+  }
+}
+
+.curtain-slice:nth-child(1) { transition-delay: 0ms; }
+.curtain-slice:nth-child(2) { transition-delay: 50ms; }
+.curtain-slice:nth-child(3) { transition-delay: 100ms; }
+.curtain-slice:nth-child(4) { transition-delay: 150ms; }
+.curtain-slice:nth-child(5) { transition-delay: 200ms; }
+
+.page-transition-curtain.active .curtain-slice {
+  transform: translateY(0);
+}
+
+/* Hide curtain after animation */
+.page-transition-curtain:not(.active) {
+  display: none;
+}
+
+.page-content {
+  min-height: 100vh;
+}
+
+/* Tech/Digital Grid Transition */
+.page-transition-tech {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+}
+
+.page-transition-tech.active {
+  display: block;
+}
+
+.transition-grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;
+  background: #1e1e1e;
+  padding: 2px;
+}
+
+.grid-cell {
+  background: #4ecdc4;
+  opacity: 0;
+  transform: scale(0);
+  animation: cellAppear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation-delay: calc(var(--index) * 30ms);
+}
+
+@keyframes cellAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(90deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+}
+
+.glitch-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4ecdc4;
+  text-shadow: 
+    2px 2px 0 #ff6b6b,
+    -2px -2px 0 #00ffcc;
+  animation: glitchText 0.5s infinite;
+}
+
+@keyframes glitchText {
+  0%, 100% {
+    text-shadow: 
+      2px 2px 0 #ff6b6b,
+      -2px -2px 0 #00ffcc;
+  }
+  20% {
+    text-shadow: 
+      -2px 2px 0 #00ffcc,
+      2px -2px 0 #ff6b6b;
+  }
+  40% {
+    text-shadow: 
+      2px -2px 0 #ff6b6b,
+      -2px 2px 0 #00ffcc;
+  }
+}
+
+/* Wave Page Transition */
+.page-transition-wave {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.page-transition-wave svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.wave-path {
+  fill: #4ecdc4;
+  transform: translateY(100%);
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.page-transition-wave.active .wave-path {
+  transform: translateY(0);
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+  .main-nav {
+    padding: 20px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
 }
