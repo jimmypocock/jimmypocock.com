@@ -181,35 +181,65 @@ export default function CoderPage() {
     )
   }
 
+  // Initialize commands with command-output progressive reveal
   useEffect(() => {
     setIsLoaded(true)
     
-    // Initial commands
-    const initialCommands: Command[] = [
+    const commandData = [
       {
         input: './welcome.sh',
         output: (
           <div className="output">
-            <pre className="ascii-art">{`
- ██████╗ ██████╗ ██████╗ ███████╗██████╗ 
-██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔══██╗
-██║     ██║   ██║██║  ██║█████╗  ██████╔╝
-██║     ██║   ██║██║  ██║██╔══╝  ██╔══██╗
-╚██████╗╚██████╔╝██████╔╝███████╗██║  ██║
- ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
-            `}</pre>
             <p className="comment">
-              Full-stack developer, creative technologist, and problem solver<br/>
-              Welcome to my digital workspace
+              Initializing workspace...<br/>
+              Loading portfolio modules...<br/>
+            </p>
+            <pre className="ascii-art" style={{ marginTop: '1rem', marginBottom: '1rem' }}>{`
+     ██╗██╗███╗   ███╗███╗   ███╗██╗   ██╗    ██████╗  ██████╗  ██████╗ ██████╗  ██████╗██╗  ██╗
+     ██║██║████╗ ████║████╗ ████║╚██╗ ██╔╝    ██╔══██╗██╔═══██╗██╔════╝██╔═══██╗██╔════╝██║ ██╔╝
+     ██║██║██╔████╔██║██╔████╔██║ ╚████╔╝     ██████╔╝██║   ██║██║     ██║   ██║██║     █████╔╝ 
+██   ██║██║██║╚██╔╝██║██║╚██╔╝██║  ╚██╔╝      ██╔═══╝ ██║   ██║██║     ██║   ██║██║     ██╔═██╗ 
+╚█████╔╝██║██║ ╚═╝ ██║██║ ╚═╝ ██║   ██║       ██║     ╚██████╔╝╚██████╗╚██████╔╝╚██████╗██║  ██╗
+ ╚════╝ ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝   ╚═╝       ╚═╝      ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝
+            `}</pre>
+            <p className="ascii-subtitle" style={{ textAlign: 'center', marginBottom: '1rem' }}>Full-stack developer, creative technologist, and problem solver</p>
+            <p className="comment">
+              Welcome to my digital workspace! 🚀<br/>
+              Type &apos;help&apos; to see available commands.
             </p>
           </div>
-        ),
-        timestamp: Date.now()
+        )
       },
       {
         input: 'ls',
-        output: commandHandlers.ls(),
-        timestamp: Date.now() + 500
+        output: (
+          <div className="file-list">
+            <div className="file-item">
+              <span className="dir-icon">📁</span>
+              <span>projects/</span>
+            </div>
+            <div className="file-item">
+              <span className="dir-icon">📁</span>
+              <span>skills/</span>
+            </div>
+            <div className="file-item">
+              <span className="dir-icon">📁</span>
+              <span>experience/</span>
+            </div>
+            <div className="file-item">
+              <span className="file-icon">📄</span>
+              <span>README.md</span>
+            </div>
+            <div className="file-item">
+              <span className="file-icon">📄</span>
+              <span>resume.pdf</span>
+            </div>
+            <div className="file-item">
+              <span className="exec-icon">🚀</span>
+              <span>contact.sh</span>
+            </div>
+          </div>
+        )
       },
       {
         input: 'cat about.md',
@@ -226,33 +256,140 @@ export default function CoderPage() {
             &nbsp;&nbsp;<span className="code-variable">currentFocus</span>: <span className="code-string">&quot;Building beautiful, functional web experiences&quot;</span><br/>
             {'}'};
           </div>
-        ),
-        timestamp: Date.now() + 1000
+        )
       },
       {
         input: 'projects',
-        output: commandHandlers.projects(),
-        timestamp: Date.now() + 1500
+        output: (
+          <div>
+            <div className="output-header">Featured Projects:</div>
+            <div className="project-grid">
+              <div className="project-card">
+                <div className="project-title">E-Commerce Platform</div>
+                <div className="project-desc">Full-stack marketplace with real-time inventory management</div>
+                <div className="project-tech">
+                  <span className="tech-tag">React</span>
+                  <span className="tech-tag">Node.js</span>
+                  <span className="tech-tag">PostgreSQL</span>
+                </div>
+              </div>
+              <div className="project-card">
+                <div className="project-title">Creative Portfolio CMS</div>
+                <div className="project-desc">Custom content management system for creative professionals</div>
+                <div className="project-tech">
+                  <span className="tech-tag">Next.js</span>
+                  <span className="tech-tag">GraphQL</span>
+                  <span className="tech-tag">AWS</span>
+                </div>
+              </div>
+              <div className="project-card">
+                <div className="project-title">Real-time Analytics Dashboard</div>
+                <div className="project-desc">Data visualization platform with live updates</div>
+                <div className="project-tech">
+                  <span className="tech-tag">Vue.js</span>
+                  <span className="tech-tag">WebSockets</span>
+                  <span className="tech-tag">D3.js</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
       },
       {
         input: 'skills',
-        output: commandHandlers.skills(),
-        timestamp: Date.now() + 2000
+        output: (
+          <div>
+            <div className="output-header">Technical Proficiencies:</div>
+            <div className="skill-container">
+              <div className="skill-bar">
+                <div className="skill-name">
+                  <span>JavaScript/TypeScript</span>
+                  <span className="skill-percentage">95%</span>
+                </div>
+                <div className="skill-progress">
+                  <div className="skill-progress-bar" style={{ width: '95%' }}></div>
+                </div>
+              </div>
+              <div className="skill-bar">
+                <div className="skill-name">
+                  <span>React/Next.js</span>
+                  <span className="skill-percentage">90%</span>
+                </div>
+                <div className="skill-progress">
+                  <div className="skill-progress-bar" style={{ width: '90%' }}></div>
+                </div>
+              </div>
+              <div className="skill-bar">
+                <div className="skill-name">
+                  <span>Node.js/Express</span>
+                  <span className="skill-percentage">85%</span>
+                </div>
+                <div className="skill-progress">
+                  <div className="skill-progress-bar" style={{ width: '85%' }}></div>
+                </div>
+              </div>
+              <div className="skill-bar">
+                <div className="skill-name">
+                  <span>Python</span>
+                  <span className="skill-percentage">80%</span>
+                </div>
+                <div className="skill-progress">
+                  <div className="skill-progress-bar" style={{ width: '80%' }}></div>
+                </div>
+              </div>
+              <div className="skill-bar">
+                <div className="skill-name">
+                  <span>System Design</span>
+                  <span className="skill-percentage">85%</span>
+                </div>
+                <div className="skill-progress">
+                  <div className="skill-progress-bar" style={{ width: '85%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
       }
     ]
 
-    // Set commands with progressive reveal
-    let currentIndex = 0
-    const revealInterval = setInterval(() => {
-      if (currentIndex < initialCommands.length) {
-        setCommands(prev => [...prev, initialCommands[currentIndex]])
-        currentIndex++
-      } else {
-        clearInterval(revealInterval)
+    // Progressive reveal: command -> output -> command -> output
+    let stepIndex = 0
+    const totalSteps = commandData.length * 2 // Each command has 2 steps: show command, then show output
+    
+    const animationInterval = setInterval(() => {
+      if (stepIndex >= totalSteps) {
+        clearInterval(animationInterval)
+        return
       }
-    }, 1000)
 
-    return () => clearInterval(revealInterval)
+      const commandIndex = Math.floor(stepIndex / 2)
+      const isCommandStep = stepIndex % 2 === 0
+
+      if (isCommandStep) {
+        // Add command only (without output)
+        setCommands(prev => [...prev, {
+          input: commandData[commandIndex].input,
+          output: '',
+          timestamp: Date.now()
+        }])
+      } else {
+        // Add output to the last command
+        setCommands(prev => {
+          const newCommands = [...prev]
+          if (newCommands.length > 0) {
+            newCommands[newCommands.length - 1] = {
+              ...newCommands[newCommands.length - 1],
+              output: commandData[commandIndex].output
+            }
+          }
+          return newCommands
+        })
+      }
+      
+      stepIndex++
+    }, 800)
+
+    return () => clearInterval(animationInterval)
   }, [])
 
   // Particle system
@@ -267,7 +404,7 @@ export default function CoderPage() {
     canvas.height = window.innerHeight
 
     const particles: Particle[] = []
-    const particleCount = 30
+    const particleCount = 60
 
     class Particle {
       x: number
@@ -280,10 +417,10 @@ export default function CoderPage() {
       constructor() {
         this.x = Math.random() * (canvas?.width || 1000)
         this.y = Math.random() * (canvas?.height || 1000)
-        this.size = Math.random() * 2 + 1
+        this.size = Math.random() * 3 + 2
         this.speedX = (Math.random() - 0.5) * 0.2
         this.speedY = (Math.random() - 0.5) * 0.2
-        this.opacity = Math.random() * 0.3 + 0.1
+        this.opacity = Math.random() * 0.4 + 0.3
       }
 
       update() {
@@ -374,44 +511,33 @@ export default function CoderPage() {
         <MatrixRain />
       </div>
 
-      <div className="terminal">
-        <div className="terminal-header">
-          <div className="terminal-ascii">
-            <pre className="ascii-art">{`
- ██████╗ ██████╗ ██████╗ ███████╗██████╗ 
-██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔══██╗
-██║     ██║   ██║██║  ██║█████╗  ██████╔╝
-██║     ██║   ██║██║  ██║██╔══╝  ██╔══██╗
-╚██████╗╚██████╔╝██████╔╝███████╗██║  ██║
- ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝
-            `}</pre>
-            <p className="ascii-subtitle">Full-stack developer, creative technologist, and problem solver</p>
-          </div>
-        </div>
-        <div className="terminal-body">
-          {commands.filter(cmd => cmd && cmd.input && cmd.output).map((cmd, index) => (
-            <div key={index} className="command-group">
-              <div className="command-line">
-                <span className="prompt">jimmy@pocock:~$</span>
-                <span className="command">{cmd.input}</span>
+      <div className="main-container coder-container">
+        <div className="terminal">
+          <div className="terminal-body">
+            {commands.map((cmd, index) => (
+              <div key={index} className="command-group">
+                <div className="command-line">
+                  <span className="prompt">jimmy@pocock:~$</span>
+                  <span className="command">{cmd.input}</span>
+                </div>
+                {cmd.output && <div className="output">{cmd.output}</div>}
               </div>
-              <div className="output">{cmd.output}</div>
-            </div>
-          ))}
-          
-          <div className="terminal-input-container">
-            <div className="terminal-input">
-              <span className="prompt">jimmy@pocock:~$</span>
-              <input
-                type="text"
-                id="commandInput"
-                value={currentCommand}
-                onChange={(e) => setCurrentCommand(e.target.value)}
-                onKeyDown={handleCommand}
-                autoComplete="off"
-                autoFocus
-              />
-              <span className="cursor"></span>
+            ))}
+            
+            <div className="terminal-input-container">
+              <div className="terminal-input">
+                <span className="prompt">jimmy@pocock:~$</span>
+                <input
+                  type="text"
+                  id="commandInput"
+                  value={currentCommand}
+                  onChange={(e) => setCurrentCommand(e.target.value)}
+                  onKeyDown={handleCommand}
+                  autoComplete="off"
+                  autoFocus
+                />
+                <span className="cursor"></span>
+              </div>
             </div>
           </div>
         </div>

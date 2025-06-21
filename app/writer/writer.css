@@ -31,6 +31,7 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+  opacity: 0.8;
 }
 
 /* Navigation - Using global nav styles */
@@ -62,34 +63,45 @@ body {
 }
 
 /* Hero Section */
-.hero {
+.writer-hero {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.hero h1 {
+.writer-hero h1 {
   font-family: var(--serif);
   font-size: clamp(3rem, 8vw, 5rem);
   line-height: 1.1;
   margin-bottom: 30px;
   font-weight: 400;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.3em;
 }
 
-.word {
+.writer-hero .word {
   display: inline-block;
   opacity: 0;
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: writerFadeInUp 0.8s ease-out forwards;
 }
 
-.word:nth-child(1) { animation-delay: 0.1s; }
-.word:nth-child(2) { animation-delay: 0.2s; }
-.word:nth-child(3) { animation-delay: 0.3s; }
-.word:nth-child(4) { animation-delay: 0.4s; }
+.writer-hero .word:nth-child(1) { 
+  animation-delay: 0.1s; 
+}
+.writer-hero .word:nth-child(2) { 
+  animation-delay: 0.2s; 
+  position: relative;
+  top: 0.15em;
+}
+.writer-hero .word:nth-child(3) { animation-delay: 0.3s; }
+.writer-hero .word:nth-child(4) { animation-delay: 0.4s; }
 
-@keyframes fadeInUp {
+@keyframes writerFadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
@@ -106,10 +118,10 @@ body {
   color: #aaa;
   max-width: 600px;
   opacity: 0;
-  animation: fadeIn 1s ease-out 0.8s forwards;
+  animation: writerFadeIn 1s ease-out 0.8s forwards;
 }
 
-@keyframes fadeIn {
+@keyframes writerFadeIn {
   to { opacity: 1; }
 }
 

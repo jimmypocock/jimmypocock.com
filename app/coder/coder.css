@@ -40,7 +40,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: 0;
-  opacity: 0.4;
+  opacity: 0.6;
   pointer-events: none;
 }
 
@@ -50,39 +50,85 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* Terminal Container */
-.terminal {
+/* Main Container */
+.main-container {
   min-height: 100vh;
-  padding: 100px 20px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 100px 20px 20px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
-/* Terminal Header */
-.terminal-header {
+/* Hero Section */
+.coder-hero {
   text-align: center;
-  margin-bottom: 40px;
-  padding: 20px;
+  margin-bottom: 2rem;
+  z-index: 2;
 }
 
-.terminal-ascii {
-  display: inline-block;
-}
-
-.ascii-art {
-  color: var(--green);
-  font-size: 10px;
-  line-height: 1.2;
+.coder-hero h1 {
+  font-size: 4rem;
+  font-weight: 700;
   margin: 0;
-  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+  color: var(--green);
+  text-shadow: 0 0 20px rgba(78, 201, 176, 0.5);
 }
 
-.ascii-subtitle {
+.hero-subtitle {
+  font-size: 1.2rem;
   color: var(--comment);
-  margin-top: 10px;
-  font-size: 14px;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Glitch Text Effect */
+.glitch-text {
+  position: relative;
+  animation: glitch 2s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+  }
+  10% {
+    transform: translate(-2px, -1px);
+  }
+  20% {
+    transform: translate(2px, 1px);
+  }
+  30% {
+    transform: translate(-1px, 2px);
+  }
+  40% {
+    transform: translate(1px, -1px);
+  }
+  50% {
+    transform: translate(-1px, 1px);
+  }
+  60% {
+    transform: translate(2px, -2px);
+  }
+  70% {
+    transform: translate(-2px, 2px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+}
+
+/* Terminal Container */
+.terminal {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 /* Terminal Header */
@@ -94,6 +140,22 @@ body {
   background: #2d2d2d;
   border-radius: 8px 8px 0 0;
   margin-bottom: 1px;
+}
+
+.terminal-ascii {
+  display: inline-block;
+}
+
+
+.ascii-subtitle {
+  color: var(--comment);
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 8px;
 }
 
 .terminal-button {
@@ -120,6 +182,7 @@ body {
   text-align: center;
   color: #999;
   font-size: 13px;
+  font-family: var(--font-mono);
 }
 
 /* Terminal Body */
@@ -127,10 +190,7 @@ body {
   flex: 1;
   background: var(--bg);
   padding: 20px;
-  border: 1px solid #2d2d2d;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  min-height: calc(100vh - 250px);
+  min-height: calc(100vh - 150px);
   overflow-y: auto;
 }
 

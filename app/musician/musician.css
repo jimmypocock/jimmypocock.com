@@ -34,7 +34,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: 0;
-  opacity: 0.5;
+  opacity: 0.7;
   pointer-events: none;
 }
 
@@ -69,7 +69,7 @@ body {
 }
 
 /* Main Container */
-.main-container {
+.musician-container {
   position: relative;
   z-index: 10;
   min-height: 100vh;
@@ -79,18 +79,18 @@ body {
 }
 
 /* Hero Section */
-.hero {
+.musician-hero {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   position: relative;
-  padding: 0 20px;
+  padding: 120px 20px 0;
 }
 
-.hero h1 {
+.musician-hero h1 {
   font-family: var(--font-display);
   font-size: clamp(60px, 10vw, 120px);
   font-weight: 900;
@@ -98,10 +98,9 @@ body {
   margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: -2px;
-  position: relative;
 }
 
-.glitch-text {
+.musician-hero .glitch-text {
   position: relative;
   color: var(--text-primary);
   text-shadow:
@@ -109,6 +108,10 @@ body {
     0 0 20px var(--accent-1),
     0 0 30px var(--accent-1);
   animation: glitch 3s infinite;
+  /* Override global glitch-text positioning */
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 @keyframes glitch {
@@ -132,7 +135,7 @@ body {
   }
 }
 
-.hero-subtitle {
+.musician-hero .hero-subtitle {
   font-size: 20px;
   color: var(--text-secondary);
   margin-bottom: 40px;

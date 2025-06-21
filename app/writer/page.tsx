@@ -99,7 +99,7 @@ export default function WriterPage() {
 
     const particles: Particle[] = []
 
-    const particleCount = 50
+    const particleCount = 70
 
     class Particle {
       x: number
@@ -112,10 +112,10 @@ export default function WriterPage() {
       constructor() {
         this.x = Math.random() * (canvas?.width || 1000)
         this.y = Math.random() * (canvas?.height || 1000)
-        this.size = Math.random() * 3 + 1
+        this.size = Math.random() * 4 + 2
         this.speedX = (Math.random() - 0.5) * 0.5
         this.speedY = (Math.random() - 0.5) * 0.5
-        this.opacity = Math.random() * 0.5 + 0.2
+        this.opacity = Math.random() * 0.5 + 0.4
       }
 
       update() {
@@ -199,19 +199,17 @@ export default function WriterPage() {
         </ul>
       </nav>
 
-      <div className="container">
-        <section className="hero">
+      <div className="container writer-container">
+        <section className="hero writer-hero">
           <div className="floating-quote left">&ldquo;</div>
           <div className="floating-quote right">&rdquo;</div>
 
           <h1>
-            <span className="word">Where</span>
-            <span className="word">thoughts</span>
-            <span className="word">take</span>
-            <span className="word">root</span>
+            <span className="word">JIMMY</span>
+            <span className="word">POCOCK</span>
           </h1>
           <p className="hero-subtitle">
-            I&apos;m Jimmy Pocock, cultivating ideas at the intersection of technology,
+            Cultivating ideas at the intersection of technology,
             creativity, and human experience. This is my digital garden&mdash;a living
             collection of thoughts, reflections, and discoveries.
           </p>

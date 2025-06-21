@@ -44,7 +44,7 @@ export default function HomePage() {
     canvas.height = window.innerHeight
 
     const particles: Particle[] = []
-    const particleCount = 40
+    const particleCount = 60
 
     class Particle {
       x: number
@@ -57,10 +57,10 @@ export default function HomePage() {
       constructor() {
         this.x = Math.random() * (canvas?.width || 1000)
         this.y = Math.random() * (canvas?.height || 1000)
-        this.size = Math.random() * 3 + 1
+        this.size = Math.random() * 4 + 1.5
         this.speedX = (Math.random() - 0.5) * 0.3
         this.speedY = (Math.random() - 0.5) * 0.3
-        this.opacity = Math.random() * 0.5 + 0.2
+        this.opacity = Math.random() * 0.6 + 0.3
       }
 
       update() {
@@ -106,7 +106,7 @@ export default function HomePage() {
           const distance = Math.sqrt(dx * dx + dy * dy)
 
           if (distance < 150 && ctx) {
-            ctx.strokeStyle = `rgba(78, 205, 196, ${0.1 * (1 - distance / 150)})`
+            ctx.strokeStyle = `rgba(78, 205, 196, ${0.15 * (1 - distance / 150)})`
             ctx.lineWidth = 1
             ctx.beginPath()
             ctx.moveTo(particle.x, particle.y)

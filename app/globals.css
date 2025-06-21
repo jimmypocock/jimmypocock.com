@@ -121,7 +121,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  background: var(--gradient-bg);
+  background: #1e1e1e;
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -156,7 +156,7 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--gradient-bg);
+  background: #1e1e1e;
   z-index: -10;
   pointer-events: none;
 }

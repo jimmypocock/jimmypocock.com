@@ -51,7 +51,7 @@ export default function MusicianPage() {
       color: string
     }> = []
 
-    const barCount = 64
+    const barCount = 32 // Reduced from 64 for better performance
     const barWidth = canvas.width / barCount
 
     for (let i = 0; i < barCount; i++) {
@@ -63,15 +63,24 @@ export default function MusicianPage() {
       })
     }
 
-    function animate() {
+    let lastTime = 0
+    const targetFPS = 30 // Limit to 30 FPS instead of 60+ for better performance
+
+    function animate(currentTime: number) {
       if (!ctx) return
       
+      if (currentTime - lastTime < 1000 / targetFPS) {
+        animationRef.current = requestAnimationFrame(animate)
+        return
+      }
+      
+      lastTime = currentTime
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       bars.forEach((bar) => {
         bar.height += (bar.targetHeight - bar.height) * 0.1
 
-        if (Math.random() > 0.95) {
+        if (Math.random() > 0.98) { // Reduced frequency of changes
           bar.targetHeight = isPlaying ? Math.random() * 400 + 100 : Math.random() * 200 + 50
         }
 
@@ -86,7 +95,7 @@ export default function MusicianPage() {
       animationRef.current = requestAnimationFrame(animate)
     }
 
-    animate()
+    animate(0)
 
     return () => {
       if (animationRef.current) {
@@ -123,7 +132,7 @@ export default function MusicianPage() {
     canvas.height = window.innerHeight
 
     const particles: Particle[] = []
-    const particleCount = 25
+    const particleCount = 30 // Reduced from 50 for better performance
 
     class Particle {
       x: number
@@ -137,10 +146,10 @@ export default function MusicianPage() {
       constructor() {
         this.x = Math.random() * (canvas?.width || 1000)
         this.y = Math.random() * (canvas?.height || 1000)
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.3
-        this.speedY = (Math.random() - 0.5) * 0.3
-        this.opacity = Math.random() * 0.2 + 0.1
+        this.size = Math.random() * 3 + 1.5 // Smaller particles
+        this.speedX = (Math.random() - 0.5) * 0.2 // Slower movement
+        this.speedY = (Math.random() - 0.5) * 0.2
+        this.opacity = Math.random() * 0.3 + 0.2 // More subtle
         const colors = ['255, 0, 110', '0, 212, 255', '255, 170, 0']
         this.color = colors[Math.floor(Math.random() * colors.length)]
       }
@@ -171,6 +180,8 @@ export default function MusicianPage() {
       particles.push(new Particle())
     }
 
+    let animationId: number
+
     function animate() {
       if (!ctx || !canvas) return
       
@@ -181,7 +192,7 @@ export default function MusicianPage() {
         particle.draw()
       })
 
-      requestAnimationFrame(animate)
+      animationId = requestAnimationFrame(animate)
     }
 
     animate()
@@ -192,7 +203,13 @@ export default function MusicianPage() {
     }
 
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (animationId) {
+        cancelAnimationFrame(animationId)
+      }
+    }
   }, [])
 
   const handleTrackClick = (track: Track) => {
@@ -227,9 +244,9 @@ export default function MusicianPage() {
         </ul>
       </nav>
 
-      <div className="main-container">
-        <section className="hero">
-          <h1 className="glitch-text">MUSICIAN</h1>
+      <div className="musician-container">
+        <section className="hero musician-hero">
+          <h1 className="glitch-text">JIMMY POCOCK</h1>
           <p className="hero-subtitle">Electronic Music Producer</p>
           <a href="#tracks" className="cta-button">Listen Now</a>
         </section>
