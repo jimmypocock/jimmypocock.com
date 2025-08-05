@@ -5,7 +5,6 @@ import { FoundationStack } from './foundation-stack';
 import { CertificateStack } from './certificate-stack';
 import { EdgeFunctionsStack } from './edge-functions-stack';
 import { CdnStack } from './cdn-stack';
-import { WafStack } from './waf-stack';
 import { MonitoringStack } from './monitoring-stack';
 import { AppStack } from './app-stack';
 
@@ -18,7 +17,7 @@ const stackPrefix = process.env.STACK_PREFIX || app.node.tryGetContext('stackPre
 const createCertificate = app.node.tryGetContext('createCertificate') === 'true';
 const notificationEmail = app.node.tryGetContext('notificationEmail');
 
-// Common environment for us-east-1 (required for CloudFront, ACM, and WAF)
+// Common environment for us-east-1 (required for CloudFront and ACM)
 const usEast1Env = {
   region: 'us-east-1',
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -46,19 +45,12 @@ const edgeFunctionsStack = new EdgeFunctionsStack(app, `${stackPrefix}-EdgeFunct
   description: `CloudFront Functions for ${appName}`,
 });
 
-// 4. WAF Stack - Web Application Firewall
-const wafStack = new WafStack(app, `${stackPrefix}-WAF`, {
-  env: usEast1Env,
-  description: `WAF rules for ${appName}`,
-});
-
-// 5. CDN Stack - CloudFront distribution and deployment
+// 4. CDN Stack - CloudFront distribution and deployment
 const cdnStack = new CdnStack(app, `${stackPrefix}-CDN`, {
   domainName: domainName,
   certificate: certificateStack.certificate,
   redirectFunction: edgeFunctionsStack.redirectFunction,
   securityHeadersFunction: edgeFunctionsStack.securityHeadersFunction,
-  webAclArn: wafStack.webAcl.attrArn,
   env: usEast1Env,
   description: `CDN distribution for ${appName}`,
 });
@@ -67,9 +59,8 @@ const cdnStack = new CdnStack(app, `${stackPrefix}-CDN`, {
 cdnStack.addDependency(foundationStack);
 cdnStack.addDependency(certificateStack);
 cdnStack.addDependency(edgeFunctionsStack);
-cdnStack.addDependency(wafStack);
 
-// 6. Monitoring Stack - CloudWatch alarms and dashboards
+// 5. Monitoring Stack - CloudWatch alarms and dashboards
 const monitoringStack = new MonitoringStack(app, `${stackPrefix}-Monitoring`, {
   distributionId: cdnStack.distribution.distributionId,
   emailAddress: notificationEmail,
@@ -80,7 +71,7 @@ const monitoringStack = new MonitoringStack(app, `${stackPrefix}-Monitoring`, {
 // Add dependency
 monitoringStack.addDependency(cdnStack);
 
-// 7. App Stack - Application deployment
+// 6. App Stack - Application deployment
 const appStack = new AppStack(app, `${stackPrefix}-App`, {
   websiteBucketName: `${domainName}-app`,
   env: usEast1Env,

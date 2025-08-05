@@ -30,7 +30,7 @@ FOUNDATION_EXISTS=$(aws cloudformation describe-stacks --stack-name "$FOUNDATION
 if [ "$FOUNDATION_EXISTS" -eq 0 ]; then
     echo ""
     echo "========================================="
-    echo "1/6: Deploying Foundation Stack"
+    echo "1/5: Deploying Foundation Stack"
     echo "========================================="
     ./scripts/deploy-foundation.sh $ARGS
 else
@@ -43,7 +43,7 @@ CERT_EXISTS=$(aws cloudformation describe-stacks --stack-name "$CERTIFICATE_STAC
 if [ "$CERT_EXISTS" -eq 0 ]; then
     echo ""
     echo "========================================="
-    echo "2/6: Deploying Certificate Stack"
+    echo "2/5: Deploying Certificate Stack"
     echo "========================================="
     echo "⚠️  Certificate creation requires DNS validation!"
     ./scripts/deploy-cert.sh $ARGS
@@ -54,21 +54,14 @@ fi
 # Deploy Edge Functions
 echo ""
 echo "========================================="
-echo "3/6: Deploying Edge Functions Stack"
+echo "3/5: Deploying Edge Functions Stack"
 echo "========================================="
 ./scripts/deploy-edge-functions.sh $ARGS
-
-# Deploy WAF
-echo ""
-echo "========================================="
-echo "4/6: Deploying WAF Stack"
-echo "========================================="
-./scripts/deploy-waf.sh $ARGS
 
 # Deploy CDN
 echo ""
 echo "========================================="
-echo "5/7: Deploying CDN Stack"
+echo "4/5: Deploying CDN Stack"
 echo "========================================="
 # Don't pass --nextjs again since we already built it
 ./scripts/deploy-cdn.sh ${ARGS//--nextjs/}
@@ -76,14 +69,14 @@ echo "========================================="
 # Deploy App Content
 echo ""
 echo "========================================="
-echo "6/7: Deploying Application Content"
+echo "5/5: Deploying Application Content"
 echo "========================================="
 ./scripts/deploy-app-content.sh $ARGS
 
 # Deploy Monitoring
 echo ""
 echo "========================================="
-echo "7/7: Deploying Monitoring Stack"
+echo "Deploying Monitoring Stack (Optional)"
 echo "========================================="
 ./scripts/deploy-monitoring.sh $ARGS
 
@@ -96,7 +89,6 @@ echo "📋 Your infrastructure:"
 echo "   Foundation:     S3 buckets for content and logs"
 echo "   Certificate:    SSL/TLS certificate"
 echo "   Edge Functions: URL redirects and security headers"
-echo "   WAF:           Rate limiting and security rules"
 echo "   CDN:           CloudFront distribution"
 echo "   App:           Application content deployment"
 echo "   Monitoring:    CloudWatch dashboards and alerts"
