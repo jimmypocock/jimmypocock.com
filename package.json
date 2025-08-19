@@ -4,9 +4,9 @@
   "private": true,
   "description": "Jimmy Pocock's personal website",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 9133",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 9133",
     "lint": "next lint",
     "build:cdk": "cd cdk && rm -f lib/*.d.ts lib/*.js && npm run build",
     "cdk:install": "cd cdk && npm install",
