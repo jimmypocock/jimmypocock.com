@@ -54,8 +54,9 @@ A production-ready Next.js template with comprehensive AWS infrastructure, Googl
 </div>
 
 > **💡 Making this a GitHub Template Repository**
-> 
+>
 > If you're the repository owner and want to make this a template for others to use:
+>
 > 1. Go to your repository **Settings**
 > 2. Scroll down to the **"Template repository"** section
 > 3. Check the box **"Template repository"**
@@ -227,6 +228,7 @@ theme: {
 #### App Metadata
 
 Update `app/layout.tsx`:
+
 - Title and description
 - Open Graph metadata
 - Schema markup
@@ -242,6 +244,7 @@ Update `app/layout.tsx`:
 #### Package Information
 
 Update `package.json`:
+
 ```json
 {
   "name": "your-app-name",
@@ -256,7 +259,6 @@ Update `package.json`:
 1. Create a GA4 property at [analytics.google.com](https://analytics.google.com)
 2. Copy your Measurement ID (G-XXXXXXXXXX)
 3. Update `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env`
-
 
 ## AWS Deployment
 
@@ -387,24 +389,28 @@ npm run maintenance:off
 ## Best Practices
 
 ### 🔒 Security
+
 - All secrets in environment variables
 - WAF protection enabled
 - HTTPS enforced
 - Content Security Policy headers
 
 ### 📊 Performance
+
 - Next.js optimizations enabled
 - CDN caching configured
 - Image optimization
 - Bundle analysis available
 
 ### ♿ Accessibility
+
 - Semantic HTML structure
 - ARIA labels where needed
 - Keyboard navigation support
 - Color contrast compliance
 
 ### 🔍 SEO
+
 - Meta tags optimized
 - Structured data markup
 - Sitemap included
@@ -415,6 +421,7 @@ npm run maintenance:off
 ### CloudWatch Dashboards
 
 Access monitoring dashboards in AWS Console:
+
 - Application performance metrics
 - Error tracking and alerts
 - Infrastructure health monitoring
@@ -430,6 +437,7 @@ npm run maintenance:off
 ```
 
 ### Log Monitoring
+
 - CloudFront access logs
 - Lambda@Edge function logs
 - Application error tracking
@@ -463,6 +471,7 @@ npm run status:all
 ```
 
 **Environment Variables**
+
 - Ensure all required variables are set in `.env`
 - Check AWS credentials and permissions
 - Verify domain ownership for certificates
