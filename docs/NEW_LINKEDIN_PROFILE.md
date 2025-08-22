@@ -10,7 +10,7 @@ Chief Architect & Product Leader | Built Platform Processing Millions in Transac
 
 ## **2. ABOUT/SUMMARY**
 
-After 10 years building RoverPass from concept to a $5.2M revenue platform serving thousands of businesses across North America, I've learned that technical excellence means nothing without measurable business impact.
+Building RoverPass from concept to $1 million-plus revenue platform serving thousands of businesses across North America, I've learned that technical excellence means nothing without measurable business impact.
 
 As Co-Founder and Chief Architect, I transformed the outdoor hospitality industry by creating what many called "the Expedia for campgrounds" – a challenge others had attempted but couldn't solve. The result? A platform that processes millions in transactions annually with 99%+ uptime, earning a 4.3+ star rating and SourceForge Best Performer recognition.
 
