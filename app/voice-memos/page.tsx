@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import styles from './voice-memos.module.css'
 
 export default function VoiceMemosPage() {
+  const router = useRouter()
   const [currentTime, setCurrentTime] = useState('9:41')
   const [isFloating, setIsFloating] = useState(false)
   const iphoneRef = useRef<HTMLDivElement>(null)
@@ -55,6 +57,14 @@ export default function VoiceMemosPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f5f5f7] to-[#e8e8ed] flex flex-col justify-center items-center px-5 py-10 relative overflow-x-hidden">
+      {/* Go Home Button */}
+      <button 
+        className="fixed top-6 left-6 z-50 bg-white/95 backdrop-blur px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-sm font-medium text-[#1d1d1f] hover:bg-white"
+        onClick={() => router.push('/')}
+      >
+        Go Home
+      </button>
+
       {/* Background pattern */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-radial from-[rgba(120,119,198,0.05)] via-transparent to-transparent opacity-50" style={{ backgroundPosition: '20% 80%' }} />

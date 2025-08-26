@@ -1,10 +1,30 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import styles from './mosaic.module.css'
 
+// Image aspect ratios and their grid spans
+const ASPECT_RATIOS = {
+  'square': { width: 1, height: 1, gridWidth: 1, gridHeight: 1 },           // 1:1
+  'landscape': { width: 3, height: 2, gridWidth: 2, gridHeight: 1 },        // 3:2
+  'landscape-wide': { width: 16, height: 9, gridWidth: 3, gridHeight: 2 },  // 16:9
+  'portrait': { width: 2, height: 3, gridWidth: 1, gridHeight: 2 },         // 2:3
+  'portrait-tall': { width: 9, height: 16, gridWidth: 2, gridHeight: 3 },   // 9:16
+  'panoramic': { width: 21, height: 9, gridWidth: 4, gridHeight: 2 },       // 21:9
+  'square-large': { width: 1, height: 1, gridWidth: 2, gridHeight: 2 },     // 1:1 but bigger
+}
+
+type AspectRatioKey = keyof typeof ASPECT_RATIOS
+
+// Photo data structure
+interface PhotoData {
+  url: string
+  aspectRatio: AspectRatioKey
+}
+
 export default function RaePage() {
-  const [currentLayout, setCurrentLayout] = useState<'random' | 'uniform' | 'pattern'>('random')
+  const router = useRouter()
   const [colorMode, setColorMode] = useState(false)
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const [zoomedImage, setZoomedImage] = useState('')
@@ -12,188 +32,260 @@ export default function RaePage() {
   
   const containerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+  const renderedCells = useRef<Set<string>>(new Set())
 
-  // Cell size variations
-  const sizes = ['size-small', 'size-medium', 'size-large', 'size-tall', 'size-small']
   const colors = ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink']
   
-  // Dog photos - replace these with your S3 bucket URLs
-  const dogPhotos = [
-    'https://images.unsplash.com/photo-1587300003388-59208cc962cb', // Golden Retriever
-    'https://images.unsplash.com/photo-1543466835-00a7907e9de1', // Happy dog
-    'https://images.unsplash.com/photo-1561037404-61cd46aa615b', // Dog portrait
-    'https://images.unsplash.com/photo-1548199973-03cce0bbc87b', // Dogs playing
-    'https://images.unsplash.com/photo-1552053831-71594a27632d', // Good boy
-    'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2', // Dog close-up
-    'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e', // Cute dog
-    'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9'  // Funny dog
+  // Dog photos with aspect ratios
+  // You'll want to replace these with your S3 URLs and correct aspect ratios
+  const dogPhotos: PhotoData[] = [
+    // Square (1:1) - Good for face close-ups
+    { url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb', aspectRatio: 'square' },
+    { url: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', aspectRatio: 'square' },
+    
+    // Landscape (3:2) - Good for dogs lying down or side profiles
+    { url: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b', aspectRatio: 'landscape' },
+    { url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b', aspectRatio: 'landscape' },
+    
+    // Portrait (2:3) - Good for sitting dogs or full body shots
+    { url: 'https://images.unsplash.com/photo-1552053831-71594a27632d', aspectRatio: 'portrait' },
+    { url: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2', aspectRatio: 'portrait' },
+    
+    // Wide landscape (16:9) - Good for action shots or multiple dogs
+    { url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e', aspectRatio: 'landscape-wide' },
+    { url: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9', aspectRatio: 'landscape-wide' },
+    
+    // Add more photos here with their aspect ratios
   ]
 
-  // Create a repeating grid pattern
-  const GRID_SIZE = 20 // 20x20 grid that repeats
-  const CELL_SIZE = 150 // pixels per cell
-  const VISIBLE_BUFFER = 2 // Number of grid repeats to render around visible area
+  // Base cell size (the smallest unit)
+  const BASE_SIZE = 120 // pixels
+  const GRID_COLUMNS = 30 // Total columns in our repeating grid
+  const GRID_ROWS = 30 // Total rows in our repeating grid
 
-  // Generate grid cells with deterministic pattern
-  const generateGridCells = useCallback(() => {
-    const cells = []
-    const totalCells = GRID_SIZE * GRID_SIZE
+  // Pre-generate a layout pattern for the repeating grid
+  const generateLayoutPattern = useCallback(() => {
+    const pattern: Array<{
+      photo: PhotoData,
+      gridColumn: number,
+      gridRow: number,
+      spanX: number,
+      spanY: number
+    }> = []
     
-    for (let i = 0; i < totalCells; i++) {
-      const row = Math.floor(i / GRID_SIZE)
-      const col = i % GRID_SIZE
-      
-      // Deterministic photo selection based on position
-      const photoIndex = (row * 3 + col * 7) % dogPhotos.length
-      const sizeIndex = (row * 5 + col * 2) % sizes.length
-      const colorIndex = (row * 2 + col * 3) % colors.length
-      
-      cells.push({
-        id: `${row}-${col}`,
-        photo: dogPhotos[photoIndex],
-        size: sizes[sizeIndex],
-        color: colors[colorIndex],
-        row,
-        col
-      })
-    }
+    const occupied = new Set<string>()
     
-    return cells
-  }, [])
-
-  const [gridCells] = useState(() => generateGridCells())
-
-  // Initialize grid
-  useEffect(() => {
-    if (!gridRef.current || !containerRef.current) return
-
-    const container = containerRef.current
-    const grid = gridRef.current
+    // Try to place each photo type in the grid
+    let photoIndex = 0
     
-    // Clear existing cells
-    grid.innerHTML = ''
-    
-    // Create cells for visible area plus buffer
-    const viewportWidth = window.innerWidth
-    const viewportHeight = window.innerHeight
-    const startCol = -Math.ceil(viewportWidth / CELL_SIZE / 2) - VISIBLE_BUFFER * GRID_SIZE
-    const endCol = Math.ceil(viewportWidth / CELL_SIZE / 2) + VISIBLE_BUFFER * GRID_SIZE
-    const startRow = -Math.ceil(viewportHeight / CELL_SIZE / 2) - VISIBLE_BUFFER * GRID_SIZE
-    const endRow = Math.ceil(viewportHeight / CELL_SIZE / 2) + VISIBLE_BUFFER * GRID_SIZE
-    
-    for (let row = startRow; row <= endRow; row++) {
-      for (let col = startCol; col <= endCol; col++) {
-        // Use modulo to get the repeating pattern
-        const gridRow = ((row % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-        const gridCol = ((col % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-        const cellData = gridCells[gridRow * GRID_SIZE + gridCol]
+    for (let row = 0; row < GRID_ROWS; row += 2) {
+      for (let col = 0; col < GRID_COLUMNS; col += 2) {
+        // Check if this position is already occupied
+        const key = `${col},${row}`
+        if (occupied.has(key)) continue
         
-        const cell = document.createElement('div')
-        cell.className = `${styles['photo-cell']} ${styles[cellData.size]}`
-        cell.style.backgroundImage = `url(${cellData.photo})`
-        cell.style.position = 'absolute'
-        cell.style.left = `${col * CELL_SIZE}px`
-        cell.style.top = `${row * CELL_SIZE}px`
-        cell.style.width = cellData.size.includes('medium') || cellData.size.includes('large') ? `${CELL_SIZE * 2}px` : `${CELL_SIZE}px`
-        cell.style.height = cellData.size.includes('tall') || cellData.size.includes('large') ? `${CELL_SIZE * 2}px` : `${CELL_SIZE}px`
-        cell.dataset.row = row.toString()
-        cell.dataset.col = col.toString()
+        // Get next photo and its aspect ratio
+        const photo = dogPhotos[photoIndex % dogPhotos.length]
+        const ratio = ASPECT_RATIOS[photo.aspectRatio]
         
-        if (colorMode) {
-          cell.classList.add(styles['overlay-color'], styles[cellData.color])
+        // Check if this photo fits at this position
+        let fits = true
+        for (let y = row; y < row + ratio.gridHeight && y < GRID_ROWS; y++) {
+          for (let x = col; x < col + ratio.gridWidth && x < GRID_COLUMNS; x++) {
+            if (occupied.has(`${x},${y}`)) {
+              fits = false
+              break
+            }
+          }
+          if (!fits) break
         }
         
-        // Click to zoom
-        cell.addEventListener('click', () => openZoom(cellData.photo))
-        
-        grid.appendChild(cell)
+        if (fits) {
+          // Mark cells as occupied
+          for (let y = row; y < row + ratio.gridHeight && y < GRID_ROWS; y++) {
+            for (let x = col; x < col + ratio.gridWidth && x < GRID_COLUMNS; x++) {
+              occupied.add(`${x},${y}`)
+            }
+          }
+          
+          pattern.push({
+            photo,
+            gridColumn: col,
+            gridRow: row,
+            spanX: ratio.gridWidth,
+            spanY: ratio.gridHeight
+          })
+          
+          photoIndex++
+        }
       }
     }
     
-    // Center the view
-    container.scrollLeft = viewportWidth / 2
-    container.scrollTop = viewportHeight / 2
+    // Fill any remaining gaps with square images
+    for (let row = 0; row < GRID_ROWS; row++) {
+      for (let col = 0; col < GRID_COLUMNS; col++) {
+        if (!occupied.has(`${col},${row}`)) {
+          pattern.push({
+            photo: dogPhotos[photoIndex % dogPhotos.length],
+            gridColumn: col,
+            gridRow: row,
+            spanX: 1,
+            spanY: 1
+          })
+          photoIndex++
+        }
+      }
+    }
     
-    setIsLoading(false)
-  }, [gridCells, colorMode, currentLayout])
+    return pattern
+  }, [])
 
-  // Handle infinite scroll
-  useEffect(() => {
+  const [layoutPattern] = useState(() => generateLayoutPattern())
+
+  // Create a cell element
+  const createCell = (
+    photo: PhotoData,
+    worldX: number,
+    worldY: number,
+    spanX: number,
+    spanY: number,
+    colorIndex: number
+  ) => {
+    const cell = document.createElement('div')
+    cell.className = styles['photo-cell']
+    cell.style.backgroundImage = `url(${photo.url})`
+    cell.style.position = 'absolute'
+    cell.style.left = `${worldX * BASE_SIZE}px`
+    cell.style.top = `${worldY * BASE_SIZE}px`
+    cell.style.width = `${spanX * BASE_SIZE - 4}px` // -4 for gap
+    cell.style.height = `${spanY * BASE_SIZE - 4}px` // -4 for gap
+    cell.dataset.worldX = worldX.toString()
+    cell.dataset.worldY = worldY.toString()
+    
+    // Add aspect ratio class for special styling
+    cell.classList.add(styles[`aspect-${photo.aspectRatio}`])
+    
+    if (colorMode) {
+      cell.classList.add(styles['overlay-color'], styles[colors[colorIndex % colors.length]])
+    }
+    
+    cell.addEventListener('click', () => openZoom(photo.url))
+    
+    return cell
+  }
+
+  // Render visible cells
+  const renderVisibleCells = useCallback(() => {
     if (!containerRef.current || !gridRef.current) return
     
     const container = containerRef.current
     const grid = gridRef.current
+    
+    const scrollLeft = container.scrollLeft
+    const scrollTop = container.scrollTop
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    
+    // Calculate visible bounds with buffer
+    const buffer = 500 // pixels
+    const visibleLeft = Math.floor((scrollLeft - buffer) / BASE_SIZE)
+    const visibleRight = Math.ceil((scrollLeft + viewportWidth + buffer) / BASE_SIZE)
+    const visibleTop = Math.floor((scrollTop - buffer) / BASE_SIZE)
+    const visibleBottom = Math.ceil((scrollTop + viewportHeight + buffer) / BASE_SIZE)
+    
+    // Track which cells should be visible
+    const shouldBeVisible = new Set<string>()
+    
+    // Calculate which pattern cells should be visible
+    for (let worldRow = visibleTop; worldRow < visibleBottom; worldRow++) {
+      for (let worldCol = visibleLeft; worldCol < visibleRight; worldCol++) {
+        // Find which pattern cell this world coordinate maps to
+        const patternCol = ((worldCol % GRID_COLUMNS) + GRID_COLUMNS) % GRID_COLUMNS
+        const patternRow = ((worldRow % GRID_ROWS) + GRID_ROWS) % GRID_ROWS
+        
+        // Find the pattern cell that covers this position
+        const patternCell = layoutPattern.find(cell => {
+          return patternCol >= cell.gridColumn &&
+                 patternCol < cell.gridColumn + cell.spanX &&
+                 patternRow >= cell.gridRow &&
+                 patternRow < cell.gridRow + cell.spanY
+        })
+        
+        if (patternCell) {
+          // Calculate the actual world position for this cell
+          const cellWorldCol = worldCol - (patternCol - patternCell.gridColumn)
+          const cellWorldRow = worldRow - (patternRow - patternCell.gridRow)
+          const cellKey = `${cellWorldCol},${cellWorldRow}`
+          
+          if (!renderedCells.current.has(cellKey)) {
+            shouldBeVisible.add(cellKey)
+            
+            // Create and add the cell
+            const colorIndex = (cellWorldCol + cellWorldRow) % colors.length
+            const cell = createCell(
+              patternCell.photo,
+              cellWorldCol,
+              cellWorldRow,
+              patternCell.spanX,
+              patternCell.spanY,
+              colorIndex
+            )
+            
+            grid.appendChild(cell)
+            renderedCells.current.add(cellKey)
+          }
+        }
+      }
+    }
+    
+    // Remove cells that are no longer visible
+    const cells = grid.querySelectorAll('[data-world-x]')
+    cells.forEach(cell => {
+      const element = cell as HTMLElement
+      const x = parseInt(element.dataset.worldX || '0')
+      const y = parseInt(element.dataset.worldY || '0')
+      const key = `${x},${y}`
+      
+      if (x < visibleLeft - 10 || x > visibleRight + 10 ||
+          y < visibleTop - 10 || y > visibleBottom + 10) {
+        element.remove()
+        renderedCells.current.delete(key)
+      }
+    })
+  }, [layoutPattern, colorMode, createCell])
+
+  // Initialize grid
+  useEffect(() => {
+    if (!gridRef.current || !containerRef.current) return
+    
+    const container = containerRef.current
+    
+    // Clear existing cells
+    gridRef.current.innerHTML = ''
+    renderedCells.current.clear()
+    
+    // Initial render
+    renderVisibleCells()
+    
+    // Center the view
+    container.scrollLeft = 2000
+    container.scrollTop = 2000
+    
+    setIsLoading(false)
+  }, [renderVisibleCells])
+
+  // Handle scroll
+  useEffect(() => {
+    if (!containerRef.current) return
+    
+    const container = containerRef.current
     let scrollTimeout: NodeJS.Timeout
     
     const handleScroll = () => {
       clearTimeout(scrollTimeout)
-      
       scrollTimeout = setTimeout(() => {
-        const scrollLeft = container.scrollLeft
-        const scrollTop = container.scrollTop
-        const viewportWidth = window.innerWidth
-        const viewportHeight = window.innerHeight
-        
-        // Calculate visible bounds
-        const visibleLeft = scrollLeft - viewportWidth
-        const visibleRight = scrollLeft + viewportWidth * 2
-        const visibleTop = scrollTop - viewportHeight
-        const visibleBottom = scrollTop + viewportHeight * 2
-        
-        // Remove cells that are far outside the viewport
-        const cells = grid.querySelectorAll('[data-row]')
-        cells.forEach(cell => {
-          const cellElement = cell as HTMLElement
-          const row = parseInt(cellElement.dataset.row!)
-          const col = parseInt(cellElement.dataset.col!)
-          const cellLeft = col * CELL_SIZE
-          const cellTop = row * CELL_SIZE
-          
-          if (cellLeft < visibleLeft - CELL_SIZE * GRID_SIZE || 
-              cellLeft > visibleRight + CELL_SIZE * GRID_SIZE ||
-              cellTop < visibleTop - CELL_SIZE * GRID_SIZE || 
-              cellTop > visibleBottom + CELL_SIZE * GRID_SIZE) {
-            cellElement.remove()
-          }
-        })
-        
-        // Add new cells for newly visible areas
-        const startCol = Math.floor((visibleLeft - CELL_SIZE * VISIBLE_BUFFER) / CELL_SIZE)
-        const endCol = Math.ceil((visibleRight + CELL_SIZE * VISIBLE_BUFFER) / CELL_SIZE)
-        const startRow = Math.floor((visibleTop - CELL_SIZE * VISIBLE_BUFFER) / CELL_SIZE)
-        const endRow = Math.ceil((visibleBottom + CELL_SIZE * VISIBLE_BUFFER) / CELL_SIZE)
-        
-        for (let row = startRow; row <= endRow; row++) {
-          for (let col = startCol; col <= endCol; col++) {
-            // Check if cell already exists
-            if (!grid.querySelector(`[data-row="${row}"][data-col="${col}"]`)) {
-              // Use modulo to get the repeating pattern
-              const gridRow = ((row % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-              const gridCol = ((col % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-              const cellData = gridCells[gridRow * GRID_SIZE + gridCol]
-              
-              const cell = document.createElement('div')
-              cell.className = `${styles['photo-cell']} ${styles[cellData.size]}`
-              cell.style.backgroundImage = `url(${cellData.photo})`
-              cell.style.position = 'absolute'
-              cell.style.left = `${col * CELL_SIZE}px`
-              cell.style.top = `${row * CELL_SIZE}px`
-              cell.style.width = cellData.size.includes('medium') || cellData.size.includes('large') ? `${CELL_SIZE * 2}px` : `${CELL_SIZE}px`
-              cell.style.height = cellData.size.includes('tall') || cellData.size.includes('large') ? `${CELL_SIZE * 2}px` : `${CELL_SIZE}px`
-              cell.dataset.row = row.toString()
-              cell.dataset.col = col.toString()
-              
-              if (colorMode) {
-                cell.classList.add(styles['overlay-color'], styles[cellData.color])
-              }
-              
-              cell.addEventListener('click', () => openZoom(cellData.photo))
-              
-              grid.appendChild(cell)
-            }
-          }
-        }
-      }, 100) // Debounce scroll events
+        renderVisibleCells()
+      }, 50) // Faster response time
     }
     
     container.addEventListener('scroll', handleScroll)
@@ -202,45 +294,26 @@ export default function RaePage() {
       container.removeEventListener('scroll', handleScroll)
       clearTimeout(scrollTimeout)
     }
-  }, [gridCells, colorMode])
-
-  // Layout changes
-  const changeLayout = (layout: 'random' | 'uniform' | 'pattern') => {
-    setCurrentLayout(layout)
-    // Re-render grid with new layout
-    window.location.reload() // Simple solution for now
-  }
+  }, [renderVisibleCells])
 
   // Toggle color overlays
   const toggleColors = () => {
     setColorMode(!colorMode)
     
-    // Update all existing cells
+    // Update existing cells
     if (gridRef.current) {
       const cells = gridRef.current.querySelectorAll(`.${styles['photo-cell']}`)
       cells.forEach((cell, i) => {
-        const cellElement = cell as HTMLElement
-        const row = parseInt(cellElement.dataset.row || '0')
-        const col = parseInt(cellElement.dataset.col || '0')
-        const gridRow = ((row % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-        const gridCol = ((col % GRID_SIZE) + GRID_SIZE) % GRID_SIZE
-        const cellData = gridCells[gridRow * GRID_SIZE + gridCol]
-        
+        const element = cell as HTMLElement
         if (!colorMode) {
-          cellElement.classList.add(styles['overlay-color'], styles[cellData.color])
+          element.classList.add(styles['overlay-color'], styles[colors[i % colors.length]])
         } else {
-          cellElement.classList.remove(styles['overlay-color'], ...colors.map(c => styles[c]))
+          element.classList.remove(styles['overlay-color'], ...colors.map(c => styles[c]))
         }
       })
     }
   }
 
-  // Shuffle grid
-  const shuffleGrid = () => {
-    // Shuffle the photos array and reload
-    dogPhotos.sort(() => Math.random() - 0.5)
-    window.location.reload()
-  }
 
   // Zoom functionality
   const openZoom = (imageSrc: string) => {
@@ -273,34 +346,20 @@ export default function RaePage() {
         <div 
           ref={gridRef}
           className={styles['infinite-grid']}
+          style={{
+            width: '20000px',
+            height: '20000px'
+          }}
         />
       </div>
 
       {/* Loading Indicator */}
       {isLoading && (
-        <div className={styles.loading}>Generating infinite mosaic...</div>
+        <div className={styles.loading}>Generating mosaic...</div>
       )}
 
       {/* Control Panel */}
-      <div className="fixed top-10 left-1/2 -translate-x-1/2 flex gap-2.5 z-[1000] bg-white px-2.5 py-2.5 rounded-[30px] shadow-lg">
-        <button 
-          className={`${styles['control-btn']} ${currentLayout === 'random' ? styles['active'] : ''}`}
-          onClick={() => changeLayout('random')}
-        >
-          Random
-        </button>
-        <button 
-          className={`${styles['control-btn']} ${currentLayout === 'uniform' ? styles['active'] : ''}`}
-          onClick={() => changeLayout('uniform')}
-        >
-          Uniform
-        </button>
-        <button 
-          className={`${styles['control-btn']} ${currentLayout === 'pattern' ? styles['active'] : ''}`}
-          onClick={() => changeLayout('pattern')}
-        >
-          Pattern
-        </button>
+      <div className="fixed top-10 left-1/2 -translate-x-1/2 flex gap-2.5 z-[1000] bg-white/95 backdrop-blur px-4 py-3 rounded-full shadow-lg">
         <button 
           className={`${styles['control-btn']} ${colorMode ? styles['active'] : ''}`}
           onClick={toggleColors}
@@ -309,9 +368,9 @@ export default function RaePage() {
         </button>
         <button 
           className={styles['control-btn']}
-          onClick={shuffleGrid}
+          onClick={() => router.push('/')}
         >
-          Shuffle
+          Go Home
         </button>
       </div>
 
@@ -328,3 +387,31 @@ export default function RaePage() {
     </div>
   )
 }
+
+/* 
+RECOMMENDED IMAGE SPECIFICATIONS:
+
+Aspect Ratios to prepare:
+1. Square (1:1) - Instagram style, face close-ups
+2. Landscape (3:2) - Classic photo ratio, good for side profiles
+3. Portrait (2:3) - Vertical shots, sitting/standing dogs
+4. Wide Landscape (16:9) - Cinematic, action shots, multiple dogs
+5. Tall Portrait (9:16) - Phone style vertical, full body shots
+6. Panoramic (21:9) - Ultra-wide shots, dogs running
+
+Image Count Recommendations:
+- Minimum: 50-60 images total for good variety
+- Optimal: 100-150 images (the pattern repeats but with enough variety it won't be noticeable)
+- Maximum before performance impact: 200-300 unique images
+
+Distribution suggestion:
+- 30% Square (1:1) - These fill gaps nicely
+- 25% Landscape (3:2)
+- 20% Portrait (2:3)
+- 15% Wide Landscape (16:9)
+- 5% Tall Portrait (9:16)
+- 5% Panoramic (21:9)
+
+The system only loads images that are visible (plus a small buffer), so even with 200+ images, 
+only about 20-40 will be loaded at any given time, keeping performance smooth.
+*/

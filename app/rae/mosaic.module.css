@@ -27,7 +27,9 @@
   animation: cellAppear 0.6s forwards;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes cellAppear {
@@ -61,25 +63,42 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* Cell Size Variations */
-.size-small {
-  width: 150px;
-  height: 150px;
+/* Aspect Ratio Specific Styles */
+.aspect-square {
+  background-size: cover;
+  background-position: center center;
 }
 
-.size-medium {
-  width: 300px;
-  height: 150px;
+.aspect-landscape {
+  background-size: cover;
+  background-position: center center;
 }
 
-.size-large {
-  width: 300px;
-  height: 300px;
+.aspect-landscape-wide {
+  background-size: cover;
+  background-position: center center;
+  /* Cinematic feel */
 }
 
-.size-tall {
-  width: 150px;
-  height: 300px;
+.aspect-portrait {
+  background-size: cover;
+  background-position: center top;
+}
+
+.aspect-portrait-tall {
+  background-size: cover;
+  background-position: center center;
+}
+
+.aspect-panoramic {
+  background-size: cover;
+  background-position: center center;
+  /* Ultra-wide emphasis */
+}
+
+.aspect-square-large {
+  background-size: cover;
+  background-position: center center;
 }
 
 /* Color Overlays */
