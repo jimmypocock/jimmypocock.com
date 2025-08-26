@@ -1,6 +1,14 @@
 ---
 title: "Protection By Armament or Protection By Peace"
 date: "2025-06-02"
+tags: ["war", "peace", "philosophy", "security"]
+connections:
+  - type: "builds-upon"
+    target: "government-vs-religion"
+  - type: "answers"
+    target: "the-fourth-turning"
+  - type: "questions"
+    target: "agree-to-disagree"
 ---
 
 Should we choose to cure the symptom or cure the sickness? Make no mistake, the desire for war is a sickness to which even the most immune to immoral thoughts may succumb. The sympton to which I am referring is the individual act of terror.

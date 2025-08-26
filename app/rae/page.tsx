@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './mosaic.module.css'
 
@@ -34,11 +34,11 @@ export default function RaePage() {
   const gridRef = useRef<HTMLDivElement>(null)
   const renderedCells = useRef<Set<string>>(new Set())
 
-  const colors = ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink']
+  const colors = useMemo(() => ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink'], [])
   
   // Dog photos with aspect ratios
   // You'll want to replace these with your S3 URLs and correct aspect ratios
-  const dogPhotos: PhotoData[] = [
+  const dogPhotos: PhotoData[] = useMemo(() => [
     // Square (1:1) - Good for face close-ups
     { url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb', aspectRatio: 'square' },
     { url: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', aspectRatio: 'square' },
@@ -56,7 +56,7 @@ export default function RaePage() {
     { url: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9', aspectRatio: 'landscape-wide' },
     
     // Add more photos here with their aspect ratios
-  ]
+  ], [])
 
   // Base cell size (the smallest unit)
   const BASE_SIZE = 120 // pixels
@@ -138,12 +138,18 @@ export default function RaePage() {
     }
     
     return pattern
-  }, [])
+  }, [dogPhotos])
 
   const [layoutPattern] = useState(() => generateLayoutPattern())
 
+  // Zoom functionality
+  const openZoom = useCallback((imageSrc: string) => {
+    setZoomedImage(imageSrc)
+    setIsZoomOpen(true)
+  }, [])
+
   // Create a cell element
-  const createCell = (
+  const createCell = useCallback((
     photo: PhotoData,
     worldX: number,
     worldY: number,
@@ -172,7 +178,7 @@ export default function RaePage() {
     cell.addEventListener('click', () => openZoom(photo.url))
     
     return cell
-  }
+  }, [colorMode, colors, openZoom])
 
   // Render visible cells
   const renderVisibleCells = useCallback(() => {
@@ -252,7 +258,7 @@ export default function RaePage() {
         renderedCells.current.delete(key)
       }
     })
-  }, [layoutPattern, colorMode, createCell])
+  }, [layoutPattern, createCell, colors.length])
 
   // Initialize grid
   useEffect(() => {
@@ -312,13 +318,6 @@ export default function RaePage() {
         }
       })
     }
-  }
-
-
-  // Zoom functionality
-  const openZoom = (imageSrc: string) => {
-    setZoomedImage(imageSrc)
-    setIsZoomOpen(true)
   }
 
   const closeZoom = () => {

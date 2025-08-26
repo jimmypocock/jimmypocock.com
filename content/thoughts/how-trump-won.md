@@ -1,6 +1,14 @@
 ---
 title: "How Trump Won"
 date: "2025-06-02"
+tags: ["politics", "economics", "strategy", "class"]
+connections:
+  - type: "builds-upon"
+    target: "mainstream-media"
+  - type: "answers"
+    target: "climate-change-argument"
+  - type: "references"
+    target: "black-lives-matter"
 ---
 
 In a political campaign in a free society, economic platforms are much more important to resonate with the populous than social platforms. For a social platform to work, there has to be a clear institutionalized prejudice, and right now, even in the midst of black lives matter and feminism, the majority of people still feel a bit too free.

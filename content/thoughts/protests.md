@@ -1,6 +1,14 @@
 ---
-title: "milo yiannopoulos is repulsive, a modern-day shock jock convincing people he's smart by speaking in riddles. but i absolutely hate that this happened. whether actual violence was involved, property damage was involved, and yes, this is self-defeating. i applaud peaceful protests but we are in no danger of this man truly affecting our way of life simply by speaking. and if we are, then we are not strong nor are we good nor are we deserving of anything better."
+title: "On Protests and Free Speech"
 date: "2025-06-02"
+tags: ["activism", "politics", "society", "free-speech"]
+connections:
+  - type: "builds-upon"
+    target: "educate-to-activate"
+  - type: "questions"
+    target: "agree-to-disagree"
+  - type: "references"
+    target: "black-lives-matter"
 ---
 
 we are walking a line. if protests continue to spark violence, protests will begin to be seen as bad by the common citizen, and that is not good. protests in the name of equal rights and liberties for American citizens are a proud part of our heritage. we welcome and protect protests even though throughout our history many have led to violence, to riots, to death. and it is impossible to ensure no one uses a protest as a gateway to inflict violence on others. but protests like these will speak louder than the ones that actually matter. if we have a brilliant women's march and preachings of love and peace in airports all across the country, those will be forgotten and the violence will be remembered.

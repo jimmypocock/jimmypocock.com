@@ -1,6 +1,15 @@
 ---
 title: "Interpretations and Misinterpretations"
 date: "2025-06-02"
+tags: ["religion", "empiricism", "philosophy", "christianity"]
+parent: "the-empiricist"
+connections:
+  - type: "builds-upon"
+    target: "the-empiricist"
+  - type: "answers"
+    target: "government-vs-religion"
+  - type: "questions"
+    target: "art-in-technology"
 ---
 
 In response to a Christian woman saying, "I don't believe God is a man or a woman, God is just God."

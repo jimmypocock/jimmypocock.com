@@ -1,6 +1,14 @@
 ---
 title: "Educate to Activate"
 date: "2025-06-02"
+tags: ["education", "activism", "society", "change"]
+connections:
+  - type: "builds-upon"
+    target: "the-empiricist"
+  - type: "questions"
+    target: "mainstream-media"
+  - type: "answers"
+    target: "protests"
 ---
 
 activateeducate.org

@@ -1,6 +1,14 @@
 ---
 title: "Black Lives Matter"
 date: "2025-06-02"
+tags: ["politics", "race", "media", "social-justice"]
+connections:
+  - type: "builds-upon"
+    target: "on-racism"
+  - type: "questions"
+    target: "mainstream-media"
+  - type: "references"
+    target: "how-trump-won"
 ---
 
 In response to an article titled: "BLM Affiliated Groups Release Policy Demands Calls For Slavery Reparations" from the Patriot Tribune.
