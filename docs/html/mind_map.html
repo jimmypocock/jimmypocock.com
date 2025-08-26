@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Map Organism</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+      color: #e0e0e0;
+    }
+
+    /* Main organism container */
+    .organism-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Central core */
+    .core {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.8) 0%, rgba(255, 107, 107, 0.2) 70%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      animation: core-pulse 3s ease-in-out infinite;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    @keyframes core-pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 40px rgba(255, 107, 107, 0.6);
+      }
+
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 60px rgba(255, 107, 107, 0.9);
+      }
+    }
+
+    /* Thought nodes */
+    .node {
+      position: absolute;
+      background: radial-gradient(circle, var(--node-color) 0%, transparent 70%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: node-breathe 4s ease-in-out infinite;
+      --node-color: rgba(100, 149, 237, 0.7);
+    }
+
+    @keyframes node-breathe {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .node:hover {
+      transform: scale(1.2);
+      z-index: 50;
+      box-shadow: 0 0 40px var(--node-color);
+    }
+
+    /* Node types */
+    .node.primary {
+      width: 100px;
+      height: 100px;
+      --node-color: rgba(100, 149, 237, 0.8);
+    }
+
+    .node.secondary {
+      width: 80px;
+      height: 80px;
+      --node-color: rgba(72, 209, 204, 0.7);
+    }
+
+    .node.tertiary {
+      width: 60px;
+      height: 60px;
+      --node-color: rgba(255, 182, 193, 0.7);
+    }
+
+    /* Organic connections */
+    .synapse {
+      position: absolute;
+      background: transparent;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .synapse svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .synapse-path {
+      fill: none;
+      stroke: rgba(100, 149, 237, 0.3);
+      stroke-width: 2;
+      stroke-dasharray: 5, 5;
+      animation: flow 2s linear infinite;
+    }
+
+    @keyframes flow {
+      from {
+        stroke-dashoffset: 0;
+      }
+
+      to {
+        stroke-dashoffset: -10;
+      }
+    }
+
+    /* Growth animation */
+    .growing {
+      animation: grow 0.6s ease-out forwards;
+    }
+
+    @keyframes grow {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Control panel */
+    .organism-controls {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 107, 107, 0.2);
+      border-color: rgba(255, 107, 107, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .control-btn.active {
+      background: rgba(255, 107, 107, 0.3);
+      border-color: rgba(255, 107, 107, 0.8);
+    }
+
+    /* Info panel */
+    .organism-info {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      max-width: 300px;
+      z-index: 1000;
+    }
+
+    .organism-title {
+      font-size: 32px;
+      font-weight: 200;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .organism-description {
+      font-size: 14px;
+      line-height: 1.6;
+      opacity: 0.7;
+    }
+
+    /* Stats display */
+    .stats-panel {
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .stat-label {
+      opacity: 0.7;
+    }
+
+    .stat-value {
+      color: #ff6b6b;
+      font-weight: bold;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 107, 107, 0.5);
+      border-radius: 10px;
+      font-size: 12px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    /* Particle effects */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particle-float 5s ease-out forwards;
+    }
+
+    @keyframes particle-float {
+      from {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+
+      to {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Metabolic mode */
+    .metabolic-mode .node {
+      animation: metabolic-pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes metabolic-pulse {
+
+      0%,
+      100% {
+        filter: brightness(1);
+      }
+
+      50% {
+        filter: brightness(1.3);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .organism-title {
+        font-size: 24px;
+      }
+
+      .organism-controls {
+        bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .stats-panel {
+        display: none;
+      }
+
+      .organism-info {
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="organism-container" id="organismContainer">
+    <!-- Core will be added here -->
+  </div>
+
+  <div class="organism-info">
+    <h1 class="organism-title">Mind Organism</h1>
+    <p class="organism-description">
+      A living map of interconnected thoughts.
+      Watch as ideas grow, branch, and evolve organically.
+    </p>
+  </div>
+
+  <div class="stats-panel">
+    <div class="stat-item">
+      <span class="stat-label">Active Nodes:</span>
+      <span class="stat-value" id="nodeCount">1</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Connections:</span>
+      <span class="stat-value" id="connectionCount">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Growth Rate:</span>
+      <span class="stat-value" id="growthRate">Stable</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Complexity:</span>
+      <span class="stat-value" id="complexity">Simple</span>
+    </div>
+  </div>
+
+  <div class="organism-controls">
+    <button class="control-btn" onclick="growOrganism()">Grow</button>
+    <button class="control-btn" onclick="pruneOrganism()">Prune</button>
+    <button class="control-btn" onclick="mutateOrganism()">Mutate</button>
+    <button class="control-btn" onclick="toggleMetabolic()">Metabolic</button>
+    <button class="control-btn" onclick="resetOrganism()">Reset</button>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    // Essay nodes data
+    const thoughtNodes = [
+      // Primary thoughts
+      { id: 'core', title: 'Stream of\nConsciousness', type: 'core', children: ['tech', 'personal', 'philosophy'] },
+
+      // Primary branches
+      {
+        id: 'tech', title: 'Digital Mind', type: 'primary', parent: 'core',
+        children: ['code', 'ai', 'internet']
+      },
+      {
+        id: 'personal', title: 'Inner Voice', type: 'primary', parent: 'core',
+        children: ['memories', 'dreams', 'fears']
+      },
+      {
+        id: 'philosophy', title: 'Questions', type: 'primary', parent: 'core',
+        children: ['existence', 'meaning', 'time']
+      },
+
+      // Secondary branches
+      { id: 'code', title: 'Code Poetry', type: 'secondary', parent: 'tech' },
+      { id: 'ai', title: 'Machine Dreams', type: 'secondary', parent: 'tech' },
+      { id: 'internet', title: 'Digital Natives', type: 'secondary', parent: 'tech' },
+      { id: 'memories', title: 'Childhood Echo', type: 'secondary', parent: 'personal' },
+      { id: 'dreams', title: 'Night Visions', type: 'secondary', parent: 'personal' },
+      { id: 'fears', title: 'Shadow Self', type: 'secondary', parent: 'personal' },
+      { id: 'existence', title: 'Why Here', type: 'secondary', parent: 'philosophy' },
+      { id: 'meaning', title: 'Purpose Search', type: 'secondary', parent: 'philosophy' },
+      { id: 'time', title: 'Temporal Flux', type: 'secondary', parent: 'philosophy' },
+
+      // Tertiary thoughts
+      { id: 'algorithm', title: 'Algorithm Life', type: 'tertiary', parent: 'ai' },
+      { id: 'social', title: 'Digital Masks', type: 'tertiary', parent: 'internet' },
+      { id: 'nostalgia', title: 'Golden Hours', type: 'tertiary', parent: 'memories' },
+      { id: 'lucid', title: 'Lucid States', type: 'tertiary', parent: 'dreams' },
+      { id: 'anxiety', title: 'Modern Panic', type: 'tertiary', parent: 'fears' },
+      { id: 'void', title: 'The Void', type: 'tertiary', parent: 'existence' }
+    ];
+
+    const container = document.getElementById('organismContainer');
+    const tooltip = document.getElementById('tooltip');
+    const nodes = new Map();
+    const connections = [];
+    let metabolicMode = false;
+    let currentPhase = 0;
+
+    // Create node element
+    function createNode(nodeData, x, y) {
+      const node = document.createElement('div');
+      node.className = `node ${nodeData.type} growing`;
+      node.style.left = x + 'px';
+      node.style.top = y + 'px';
+      node.textContent = nodeData.title;
+      node.dataset.id = nodeData.id;
+
+      if (nodeData.type === 'core') {
+        node.className = 'core growing';
+      }
+
+      // Click handler
+      node.addEventListener('click', () => {
+        pulseNode(node);
+        if (nodeData.children && nodeData.children.length > 0) {
+          growChildren(nodeData.id);
+        }
+        console.log(`Opening: ${nodeData.title}`);
+        // window.location.href = `/essays/${nodeData.title.toLowerCase().replace(/\s+/g, '-')}.html`;
+      });
+
+      // Hover tooltip
+      node.addEventListener('mouseenter', (e) => {
+        tooltip.textContent = `Click to explore: ${nodeData.title.replace(/\n/g, ' ')}`;
+        tooltip.classList.add('visible');
+        updateTooltipPosition(e);
+      });
+
+      node.addEventListener('mousemove', updateTooltipPosition);
+      node.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+
+      container.appendChild(node);
+      nodes.set(nodeData.id, { element: node, data: nodeData, x, y });
+
+      // Create particles on spawn
+      createParticleBurst(x, y);
+
+      // Update stats
+      updateStats();
+
+      return node;
+    }
+
+    // Create connection between nodes
+    function createConnection(fromId, toId) {
+      const fromNode = nodes.get(fromId);
+      const toNode = nodes.get(toId);
+
+      if (!fromNode || !toNode) return;
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.style.position = 'absolute';
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      svg.style.top = '0';
+      svg.style.left = '0';
+      svg.style.pointerEvents = 'none';
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.classList.add('synapse-path');
+
+      // Calculate curved path
+      const x1 = fromNode.x + 50;
+      const y1 = fromNode.y + 50;
+      const x2 = toNode.x + 40;
+      const y2 = toNode.y + 40;
+
+      const cx = (x1 + x2) / 2 + (Math.random() - 0.5) * 50;
+      const cy = (y1 + y2) / 2 + (Math.random() - 0.5) * 50;
+
+      path.setAttribute('d', `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+
+      svg.appendChild(path);
+      container.appendChild(svg);
+      connections.push(svg);
+
+      updateStats();
+    }
+
+    // Initialize organism
+    function initOrganism() {
+      // Create core
+      const centerX = window.innerWidth / 2 - 60;
+      const centerY = window.innerHeight / 2 - 60;
+
+      const core = thoughtNodes.find(n => n.id === 'core');
+      createNode(core, centerX, centerY);
+    }
+
+    // Grow children nodes
+    function growChildren(parentId) {
+      const parent = nodes.get(parentId);
+      if (!parent) return;
+
+      const children = thoughtNodes.filter(n => n.parent === parentId);
+      const angleStep = (Math.PI * 2) / children.length;
+
+      children.forEach((child, index) => {
+        if (!nodes.has(child.id)) {
+          const angle = angleStep * index;
+          const radius = child.type === 'primary' ? 200 :
+            child.type === 'secondary' ? 150 : 100;
+
+          const x = parent.x + Math.cos(angle) * radius;
+          const y = parent.y + Math.sin(angle) * radius;
+
+          setTimeout(() => {
+            createNode(child, x, y);
+            createConnection(parentId, child.id);
+          }, index * 200);
+        }
+      });
+    }
+
+    // Control functions
+    function growOrganism() {
+      if (currentPhase === 0) {
+        // Grow primary branches
+        growChildren('core');
+        currentPhase = 1;
+      } else if (currentPhase === 1) {
+        // Grow secondary branches
+        ['tech', 'personal', 'philosophy'].forEach(id => {
+          growChildren(id);
+        });
+        currentPhase = 2;
+      } else {
+        // Grow tertiary branches
+        thoughtNodes
+          .filter(n => n.type === 'secondary')
+          .forEach(n => growChildren(n.id));
+        currentPhase = 3;
+      }
+    }
+
+    function pruneOrganism() {
+      // Remove tertiary nodes
+      nodes.forEach((node, id) => {
+        if (node.data.type === 'tertiary') {
+          node.element.style.animation = 'grow 0.5s ease-out reverse';
+          setTimeout(() => {
+            node.element.remove();
+            nodes.delete(id);
+          }, 500);
+        }
+      });
+
+      // Remove orphaned connections
+      connections.forEach(conn => {
+        conn.style.opacity = '0';
+        setTimeout(() => conn.remove(), 500);
+      });
+      connections.length = 0;
+
+      currentPhase = Math.max(0, currentPhase - 1);
+      updateStats();
+    }
+
+    function mutateOrganism() {
+      nodes.forEach(node => {
+        if (node.data.type !== 'core') {
+          const colors = [
+            'rgba(100, 149, 237, 0.8)',
+            'rgba(72, 209, 204, 0.8)',
+            'rgba(255, 182, 193, 0.8)',
+            'rgba(255, 160, 122, 0.8)',
+            'rgba(147, 112, 219, 0.8)'
+          ];
+          node.element.style.setProperty('--node-color', colors[Math.floor(Math.random() * colors.length)]);
+
+          // Random position shift
+          const dx = (Math.random() - 0.5) * 50;
+          const dy = (Math.random() - 0.5) * 50;
+          node.x += dx;
+          node.y += dy;
+          node.element.style.left = node.x + 'px';
+          node.element.style.top = node.y + 'px';
+        }
+      });
+
+      updateStats();
+    }
+
+    function toggleMetabolic() {
+      metabolicMode = !metabolicMode;
+      container.classList.toggle('metabolic-mode');
+      event.target.classList.toggle('active');
+
+      if (metabolicMode) {
+        document.getElementById('growthRate').textContent = 'Accelerated';
+      } else {
+        document.getElementById('growthRate').textContent = 'Stable';
+      }
+    }
+
+    function resetOrganism() {
+      nodes.forEach(node => {
+        if (node.data.id !== 'core') {
+          node.element.remove();
+        }
+      });
+
+      connections.forEach(conn => conn.remove());
+
+      nodes.clear();
+      connections.length = 0;
+      currentPhase = 0;
+
+      initOrganism();
+    }
+
+    // Utility functions
+    function pulseNode(node) {
+      node.animate([
+        { transform: 'scale(1)', boxShadow: '0 0 20px var(--node-color)' },
+        { transform: 'scale(1.3)', boxShadow: '0 0 60px var(--node-color)' },
+        { transform: 'scale(1)', boxShadow: '0 0 20px var(--node-color)' }
+      ], {
+        duration: 500,
+        easing: 'ease-in-out'
+      });
+    }
+
+    function createParticleBurst(x, y) {
+      for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = (x + 50) + 'px';
+        particle.style.top = (y + 50) + 'px';
+        particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+        particle.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+        container.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 5000);
+      }
+    }
+
+    function updateTooltipPosition(e) {
+      tooltip.style.left = e.clientX + 15 + 'px';
+      tooltip.style.top = e.clientY - 30 + 'px';
+    }
+
+    function updateStats() {
+      document.getElementById('nodeCount').textContent = nodes.size;
+      document.getElementById('connectionCount').textContent = connections.length;
+
+      const complexity = nodes.size < 5 ? 'Simple' :
+        nodes.size < 10 ? 'Moderate' :
+          nodes.size < 15 ? 'Complex' : 'Intricate';
+      document.getElementById('complexity').textContent = complexity;
+    }
+
+    // Auto-growth animation
+    let autoGrowth = false;
+    function toggleAutoGrowth() {
+      autoGrowth = !autoGrowth;
+      if (autoGrowth) {
+        const growthInterval = setInterval(() => {
+          if (currentPhase < 3 && autoGrowth) {
+            growOrganism();
+          } else {
+            clearInterval(growthInterval);
+          }
+        }, 3000);
+      }
+    }
+
+    // Initialize
+    initOrganism();
+
+    // Ambient animation
+    setInterval(() => {
+      if (metabolicMode) {
+        const randomNode = Array.from(nodes.values())[Math.floor(Math.random() * nodes.size)];
+        if (randomNode) {
+          pulseNode(randomNode.element);
+        }
+      }
+    }, 2000);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinite Mosaic</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #fafafa;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+
+    .mosaic-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .mosaic-grid {
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--cell-size), 1fr));
+      gap: 2px;
+      transform: translate(-25%, -25%);
+      transition: transform 0.15s linear;
+      --cell-size: 150px;
+    }
+
+    .photo-cell {
+      position: relative;
+      background-image: url('https://images.unsplash.com/photo-1533450718592-29d45635f0a9');
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      opacity: 0;
+      animation: cellAppear 0.6s forwards;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    @keyframes cellAppear {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .photo-cell::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg,
+          transparent 30%,
+          rgba(255, 255, 255, 0.1) 50%,
+          transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+
+    .photo-cell:hover::before {
+      transform: translateX(100%);
+    }
+
+    .photo-cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Different cell sizes */
+    .photo-cell.size-small {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+
+    .photo-cell.size-medium {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    .photo-cell.size-large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .photo-cell.size-tall {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+
+    /* Overlay effects */
+    .photo-cell.overlay-color::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      mix-blend-mode: multiply;
+      opacity: 0.3;
+      transition: opacity 0.3s;
+    }
+
+    .photo-cell:hover.overlay-color::after {
+      opacity: 0;
+    }
+
+    .photo-cell.overlay-blue::after {
+      background: #3498db;
+    }
+
+    .photo-cell.overlay-purple::after {
+      background: #9b59b6;
+    }
+
+    .photo-cell.overlay-green::after {
+      background: #2ecc71;
+    }
+
+    .photo-cell.overlay-orange::after {
+      background: #e67e22;
+    }
+
+    .photo-cell.overlay-pink::after {
+      background: #e91e63;
+    }
+
+    /* Control panel */
+    .control-panel {
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .control-btn {
+      background: transparent;
+      border: 1px solid #e0e0e0;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .control-btn:hover,
+    .control-btn.active {
+      background: #333;
+      color: white;
+      border-color: #333;
+    }
+
+    /* Navigation indicator */
+    .nav-indicator {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .nav-arrow {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #333;
+      border-left: none;
+      border-bottom: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-arrow:hover {
+      transform: scale(1.2);
+    }
+
+    .nav-arrow.up {
+      transform: rotate(-45deg);
+    }
+
+    .nav-arrow.right {
+      transform: rotate(45deg);
+    }
+
+    .nav-arrow.down {
+      transform: rotate(135deg);
+    }
+
+    .nav-arrow.left {
+      transform: rotate(-135deg);
+    }
+
+    .position-display {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 1px;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    /* Zoom overlay */
+    .zoom-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      cursor: zoom-out;
+    }
+
+    .zoom-overlay.active {
+      display: flex;
+    }
+
+    .zoomed-photo {
+      max-width: 90%;
+      max-height: 90%;
+      background-image: url('https://images.unsplash.com/photo-1533450718592-29d45635f0a9');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      width: 80vw;
+      height: 80vh;
+      animation: zoomIn 0.3s ease;
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Pattern mode */
+    .pattern-mode .photo-cell:nth-child(3n) {
+      filter: brightness(0.9);
+    }
+
+    .pattern-mode .photo-cell:nth-child(5n) {
+      filter: contrast(1.2);
+    }
+
+    .pattern-mode .photo-cell:nth-child(7n) {
+      filter: saturate(1.5);
+    }
+
+    /* Loading indicator */
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      color: #999;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .mosaic-grid {
+        --cell-size: 100px;
+      }
+
+      .control-panel {
+        top: 20px;
+        flex-wrap: wrap;
+        max-width: 90%;
+      }
+
+      .nav-indicator {
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mosaic-container" id="mosaicContainer">
+    <div class="mosaic-grid" id="mosaicGrid">
+      <!-- Photos will be added here -->
+    </div>
+    <div class="loading">Generating infinite mosaic...</div>
+  </div>
+
+  <div class="control-panel">
+    <button class="control-btn" onclick="changeLayout('random')">Random</button>
+    <button class="control-btn" onclick="changeLayout('uniform')">Uniform</button>
+    <button class="control-btn" onclick="changeLayout('pattern')">Pattern</button>
+    <button class="control-btn" onclick="toggleColors()">Colors</button>
+    <button class="control-btn" onclick="shuffleGrid()">Shuffle</button>
+  </div>
+
+  <div class="nav-indicator">
+    <div class="nav-arrow up" onclick="navigate('up')"></div>
+    <div class="nav-arrow left" onclick="navigate('left')"></div>
+    <div class="position-display" id="positionDisplay">0, 0</div>
+    <div class="nav-arrow right" onclick="navigate('right')"></div>
+    <div class="nav-arrow down" onclick="navigate('down')"></div>
+  </div>
+
+  <div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+    <div class="zoomed-photo"></div>
+  </div>
+
+  <script>
+    const mosaicGrid = document.getElementById('mosaicGrid');
+    const positionDisplay = document.getElementById('positionDisplay');
+    const zoomOverlay = document.getElementById('zoomOverlay');
+
+    let gridX = 0, gridY = 0;
+    let currentLayout = 'random';
+    let colorMode = false;
+    let cells = [];
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+
+    // Cell size variations
+    const sizes = ['size-small', 'size-medium', 'size-large', 'size-tall', 'size-small'];
+    const colors = ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink'];
+
+    // Generate initial grid
+    function generateGrid() {
+      const cellCount = 200; // Increased for infinite feel
+
+      for (let i = 0; i < cellCount; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'photo-cell';
+
+        // Random size
+        if (currentLayout === 'random') {
+          cell.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+        } else if (currentLayout === 'pattern') {
+          cell.classList.add(sizes[i % sizes.length]);
+        } else {
+          cell.classList.add('size-small');
+        }
+
+        // Random color overlay
+        if (colorMode) {
+          cell.classList.add('overlay-color', colors[Math.floor(Math.random() * colors.length)]);
+        }
+
+        // Vary background position for diversity
+        const positions = [
+          'center center',
+          'top left',
+          'top right',
+          'bottom left',
+          'bottom right',
+          'center top',
+          'center bottom'
+        ];
+        cell.style.backgroundPosition = positions[i % positions.length];
+
+        // Animation delay
+        cell.style.animationDelay = (Math.random() * 0.5) + 's';
+
+        // Click to zoom
+        cell.addEventListener('click', () => openZoom());
+
+        mosaicGrid.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    // Navigation
+    function navigate(direction) {
+      const step = 100;
+      let translateX = gridX;
+      let translateY = gridY;
+
+      switch (direction) {
+        case 'up':
+          translateY += step;
+          gridY += step;
+          break;
+        case 'down':
+          translateY -= step;
+          gridY -= step;
+          break;
+        case 'left':
+          translateX += step;
+          gridX += step;
+          break;
+        case 'right':
+          translateX -= step;
+          gridX -= step;
+          break;
+      }
+
+      mosaicGrid.style.transform = `translate(calc(-25% + ${translateX}px), calc(-25% + ${translateY}px))`;
+      updatePosition();
+
+      // Infinite scroll effect - regenerate edge cells
+      regenerateEdgeCells();
+    }
+
+    // Update position display
+    function updatePosition() {
+      const x = Math.round(-gridX / 10);
+      const y = Math.round(-gridY / 10);
+      positionDisplay.textContent = `${x}, ${y}`;
+    }
+
+    // Regenerate edge cells for infinite effect
+    function regenerateEdgeCells() {
+      // This creates the illusion of infinite grid
+      cells.forEach((cell, i) => {
+        if (Math.random() > 0.9) {
+          // Randomly refresh some cells
+          cell.style.opacity = '0';
+          setTimeout(() => {
+            cell.style.opacity = '1';
+            // Change background position for variety
+            const positions = ['center', 'top', 'bottom', 'left', 'right'];
+            cell.style.backgroundPosition = positions[Math.floor(Math.random() * positions.length)];
+          }, 100);
+        }
+      });
+    }
+
+    // Layout changes
+    function changeLayout(layout) {
+      currentLayout = layout;
+
+      // Update button states
+      document.querySelectorAll('.control-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Apply layout
+      cells.forEach((cell, i) => {
+        cell.className = 'photo-cell';
+
+        if (layout === 'random') {
+          cell.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+        } else if (layout === 'pattern') {
+          cell.classList.add(sizes[i % sizes.length]);
+          mosaicGrid.classList.add('pattern-mode');
+        } else {
+          cell.classList.add('size-small');
+          mosaicGrid.classList.remove('pattern-mode');
+        }
+
+        if (colorMode) {
+          cell.classList.add('overlay-color', colors[Math.floor(Math.random() * colors.length)]);
+        }
+      });
+    }
+
+    // Toggle color overlays
+    function toggleColors() {
+      colorMode = !colorMode;
+      event.target.classList.toggle('active');
+
+      cells.forEach((cell, i) => {
+        if (colorMode) {
+          cell.classList.add('overlay-color', colors[i % colors.length]);
+        } else {
+          cell.classList.remove('overlay-color', ...colors);
+        }
+      });
+    }
+
+    // Shuffle grid
+    function shuffleGrid() {
+      cells.forEach(cell => {
+        cell.style.order = Math.floor(Math.random() * 1000);
+        cell.style.opacity = '0';
+        setTimeout(() => {
+          cell.style.opacity = '1';
+        }, Math.random() * 500);
+      });
+    }
+
+    // Zoom functionality
+    function openZoom() {
+      zoomOverlay.classList.add('active');
+    }
+
+    function closeZoom() {
+      zoomOverlay.classList.remove('active');
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp': navigate('up'); break;
+        case 'ArrowDown': navigate('down'); break;
+        case 'ArrowLeft': navigate('left'); break;
+        case 'ArrowRight': navigate('right'); break;
+        case 'Escape': closeZoom(); break;
+      }
+    });
+
+    // Mouse drag navigation
+    mosaicGrid.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.pageX;
+      startY = e.pageY;
+      mosaicGrid.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+
+      const deltaX = e.pageX - startX;
+      const deltaY = e.pageY - startY;
+
+      gridX += deltaX * 0.5;
+      gridY += deltaY * 0.5;
+
+      mosaicGrid.style.transform = `translate(calc(-25% + ${gridX}px), calc(-25% + ${gridY}px))`;
+      updatePosition();
+
+      startX = e.pageX;
+      startY = e.pageY;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      mosaicGrid.style.cursor = 'grab';
+    });
+
+    // Auto-scroll animation
+    let autoScroll = false;
+    let autoScrollInterval;
+
+    function toggleAutoScroll() {
+      autoScroll = !autoScroll;
+
+      if (autoScroll) {
+        autoScrollInterval = setInterval(() => {
+          gridX -= 1;
+          gridY -= 0.5;
+          mosaicGrid.style.transform = `translate(calc(-25% + ${gridX}px), calc(-25% + ${gridY}px))`;
+          updatePosition();
+
+          if (Math.abs(gridX) % 100 === 0) {
+            regenerateEdgeCells();
+          }
+        }, 30);
+      } else {
+        clearInterval(autoScrollInterval);
+      }
+    }
+
+    // Touch support
+    let touchStartX, touchStartY;
+
+    mosaicGrid.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+
+    mosaicGrid.addEventListener('touchmove', (e) => {
+      if (!touchStartX || !touchStartY) return;
+
+      const deltaX = e.touches[0].clientX - touchStartX;
+      const deltaY = e.touches[0].clientY - touchStartY;
+
+      gridX += deltaX * 0.5;
+      gridY += deltaY * 0.5;
+
+      mosaicGrid.style.transform = `translate(calc(-25% + ${gridX}px), calc(-25% + ${gridY}px))`;
+      updatePosition();
+
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+
+    // Initialize
+    generateGrid();
+
+    // Remove loading after grid loads
+    setTimeout(() => {
+      document.querySelector('.loading').style.display = 'none';
+    }, 1000);
+  </script>
+</body>
+
+</html>

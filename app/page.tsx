@@ -27,35 +27,77 @@ export default function Home() {
             <a 
               href="https://www.github.com/jimmypocock" 
               title="github"
-              className="text-[#ff6100] uppercase tracking-widest hover:underline"
+              className="text-[#ff6100] uppercase tracking-widest hover:underline text-bold"
+              target="_blank"
             >
-              developer
+              engineer
             </a>
-            {' '}in austin, tx.
+            {' '}in austin, tx
           </p>
           <p className="text-white text-base md:text-xl mb-2 tracking-wider">
-            i help build{' '}
+            i built{' '}
             <a 
               href="https://www.roverpass.com" 
               title="roverpass.com"
               className="text-[#ff6100] uppercase tracking-widest hover:underline"
+              target="_blank"
             >
               roverpass
             </a>
-            .
           </p>
           <p className="text-white text-base md:text-xl mb-2 tracking-wider">
+            i built{' '}
+            <a 
+              href="https://www.vocaltechniquetranslator.com" 
+              title="vocaltechniquetranslator.com"
+              className="text-[#ff6100] uppercase tracking-widest hover:underline"
+              target="_blank"
+            >
+              vocal technique translator
+            </a>
+          </p>
+          <p className="text-white text-base md:text-xl mb-2 tracking-wider">
+            i built{' '}
+            <a 
+              href="https://www.songsnips.com" 
+              title="songsnips.com"
+              className="text-[#ff6100] uppercase tracking-widest hover:underline"
+              target="_blank"
+            >
+              songsnips
+            </a>
+          </p>
+          <p className="text-white text-base md:text-xl mb-6 tracking-wider">
             let&apos;s{' '}
             <a 
               href="https://www.linkedin.com/in/jimmypocock" 
               title="email"
               className="text-[#ff6100] uppercase tracking-widest hover:underline"
+              target="_blank"
             >
               talk
             </a>
-            {' '}about code.
+            {' '}about code
           </p>
-          <p className="text-white text-base md:text-xl mb-2 tracking-wider mt-6">
+          <p className="text-white text-base md:text-xl mb-2 tracking-wider">
+            hear my{' '}
+            <Link 
+              href="/voice-memos" 
+              className="text-[#ff6100] uppercase tracking-widest hover:underline"
+            >
+              music
+            </Link>
+          </p>
+          <p className="text-white text-base md:text-xl mb-2 tracking-wider">
+            see my{' '}
+            <Link 
+              href="/rae" 
+              className="text-[#ff6100] uppercase tracking-widest hover:underline"
+            >
+              dog
+            </Link>
+          </p>
+          <p className="text-white text-base md:text-xl mb-2 tracking-wider">
             read my{' '}
             <Link 
               href="/thoughts" 
@@ -63,7 +105,6 @@ export default function Home() {
             >
               thoughts
             </Link>
-            .
           </p>
         </div>
       </div>
