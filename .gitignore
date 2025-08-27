@@ -85,3 +85,9 @@ temp/
 
 # private folder
 .private/
+
+# Large image files (managed separately via S3)
+# Rae's images are uploaded directly to S3 to avoid CDK timeout
+public/images/rae/*.webp
+# Keep the README
+!public/images/rae/README.md

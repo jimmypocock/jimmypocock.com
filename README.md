@@ -324,6 +324,82 @@ npm run maintenance:on
 npm run maintenance:off
 ```
 
+## Image Management
+
+### Managing Large Image Collections (Rae's Photos)
+
+The site includes a photo mosaic with 198 images (100MB+) that are managed separately from code deployment to avoid CDK Lambda timeout issues.
+
+#### Key Concepts
+- **Images stored in S3**: Large images live in S3 as the source of truth
+- **Gitignored locally**: `.webp` files in `public/images/rae/` are not tracked in git
+- **Separate upload**: Images upload directly to S3, bypassing CDK
+- **Automated naming**: New images are automatically renamed to `rae-N.webp` pattern
+
+#### Image Commands
+
+```bash
+# Interactive menu for all image operations
+npm run images
+
+# Quick commands
+npm run images:add     # Add and rename new images (rae-199.webp, etc.)
+npm run images:upload  # Upload images to S3
+npm run images:sync    # Upload and invalidate CloudFront cache
+
+# Direct script usage
+./scripts/manage-rae-images.sh list      # List images in S3
+./scripts/manage-rae-images.sh download  # Download from S3 to local
+./scripts/manage-rae-images.sh full      # Add, upload, and invalidate
+```
+
+#### Adding New Images
+
+```bash
+# Method 1: Interactive
+npm run images
+# Select option 6 for "Full sync (add, upload, invalidate)"
+
+# Method 2: Step by step
+cp new-photo.webp public/images/rae/   # Add new image
+npm run images:add                      # Renames to rae-199.webp
+npm run images:sync                     # Upload and clear cache
+```
+
+#### Deployment with Images
+
+```bash
+# Deploy code only (recommended for most updates)
+npm run deploy:app
+
+# Deploy code and sync images
+npm run deploy:full
+
+# Upload images only (if deployment times out)
+./scripts/deploy-clean.sh --images-only
+```
+
+#### Troubleshooting Images
+
+**Missing images locally:**
+```bash
+./scripts/manage-rae-images.sh download
+```
+
+**Deployment timeout with images:**
+- Images are too large for CDK Lambda (15-min timeout)
+- Use `npm run deploy:app` for code only
+- Use `npm run images:sync` to upload images separately
+
+**Images not updating on site:**
+```bash
+# Force CloudFront cache clear
+aws cloudfront create-invalidation \
+  --distribution-id E1P43FQCTLJGL1 \
+  --paths "/images/rae/*" \
+  --profile jimmycpocock
+```
+
 ## Development Scripts
 
 | Command | Description |

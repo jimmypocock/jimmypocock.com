@@ -37,7 +37,11 @@ export class AppStack extends Stack {
     }
     
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      sources: [s3deploy.Source.asset(outPath)],
+      sources: [s3deploy.Source.asset(outPath, {
+        exclude: [
+          'images/rae/**',  // Exclude Rae's images - managed separately via S3 sync
+        ],
+      })],
       destinationBucket: websiteBucket,
       distribution: distribution,
       distributionPaths: ['/*'],
@@ -46,7 +50,7 @@ export class AppStack extends Stack {
         s3deploy.CacheControl.maxAge(Duration.hours(1)),
         s3deploy.CacheControl.fromString('s-maxage=31536000'),
       ],
-      prune: true,
+      prune: false,  // Don't prune - we manage images separately
       retainOnDelete: false,
     });
 

@@ -64,10 +64,24 @@ export default function RaePage() {
     return photos.sort(() => Math.random() - 0.5)
   }, [])
 
-  // Base cell size (the smallest unit)
-  const BASE_SIZE = 120 // pixels
-  const GRID_COLUMNS = 30 // Total columns in our repeating grid
-  const GRID_ROWS = 30 // Total rows in our repeating grid
+  // Detect mobile device
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768 || 
+                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      setIsMobile(mobile)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Base cell size and grid dimensions - smaller on mobile
+  const BASE_SIZE = isMobile ? 100 : 120 // pixels
+  const GRID_COLUMNS = isMobile ? 10 : 30 // Total columns in our repeating grid
+  const GRID_ROWS = isMobile ? 10 : 30 // Total rows in our repeating grid
 
   // Pre-generate a layout pattern for the repeating grid
   const generateLayoutPattern = useCallback(() => {
@@ -257,7 +271,7 @@ export default function RaePage() {
         renderedCells.current.delete(key)
       }
     })
-  }, [layoutPattern, createCell])
+  }, [layoutPattern, createCell, isMobile])
 
   // Initialize grid
   useEffect(() => {
@@ -290,7 +304,7 @@ export default function RaePage() {
       clearTimeout(scrollTimeout)
       scrollTimeout = setTimeout(() => {
         renderVisibleCells()
-      }, 50) // Faster response time
+      }, isMobile ? 100 : 50) // Slower response on mobile to reduce CPU usage
     }
     
     container.addEventListener('scroll', handleScroll)
@@ -335,7 +349,9 @@ export default function RaePage() {
 
       {/* Loading Indicator */}
       {isLoading && (
-        <div className={styles.loading}>Generating mosaic...</div>
+        <div className={styles.loading}>
+          {isMobile ? 'Loading mobile-optimized mosaic...' : 'Generating mosaic...'}
+        </div>
       )}
 
       {/* Control Panel */}
