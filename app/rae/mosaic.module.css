@@ -101,44 +101,6 @@
   background-position: center center;
 }
 
-/* Color Overlays */
-.overlay-color::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  mix-blend-mode: multiply;
-  opacity: 0.3;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-.photo-cell:hover.overlay-color::after {
-  opacity: 0;
-}
-
-.overlay-blue::after {
-  background: #3498db;
-}
-
-.overlay-purple::after {
-  background: #9b59b6;
-}
-
-.overlay-green::after {
-  background: #2ecc71;
-}
-
-.overlay-orange::after {
-  background: #e67e22;
-}
-
-.overlay-pink::after {
-  background: #e91e63;
-}
-
 /* Control Button */
 .control-btn {
   background: transparent;

@@ -25,7 +25,6 @@ interface PhotoData {
 
 export default function RaePage() {
   const router = useRouter()
-  const [colorMode, setColorMode] = useState(false)
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const [zoomedImage, setZoomedImage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -33,8 +32,6 @@ export default function RaePage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const renderedCells = useRef<Set<string>>(new Set())
-
-  const colors = useMemo(() => ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink'], [])
   
   // Function to randomly assign aspect ratios to images
   const getRandomAspectRatio = (): AspectRatioKey => {
@@ -163,8 +160,7 @@ export default function RaePage() {
     worldX: number,
     worldY: number,
     spanX: number,
-    spanY: number,
-    colorIndex: number
+    spanY: number
   ) => {
     const cell = document.createElement('div')
     cell.className = styles['photo-cell']
@@ -180,14 +176,10 @@ export default function RaePage() {
     // Add aspect ratio class for special styling
     cell.classList.add(styles[`aspect-${photo.aspectRatio}`])
     
-    if (colorMode) {
-      cell.classList.add(styles['overlay-color'], styles[colors[colorIndex % colors.length]])
-    }
-    
     cell.addEventListener('click', () => openZoom(photo.url))
     
     return cell
-  }, [colorMode, colors, openZoom])
+  }, [openZoom])
 
   // Render visible cells
   const renderVisibleCells = useCallback(() => {
@@ -236,14 +228,12 @@ export default function RaePage() {
             shouldBeVisible.add(cellKey)
             
             // Create and add the cell
-            const colorIndex = (cellWorldCol + cellWorldRow) % colors.length
             const cell = createCell(
               patternCell.photo,
               cellWorldCol,
               cellWorldRow,
               patternCell.spanX,
-              patternCell.spanY,
-              colorIndex
+              patternCell.spanY
             )
             
             grid.appendChild(cell)
@@ -267,7 +257,7 @@ export default function RaePage() {
         renderedCells.current.delete(key)
       }
     })
-  }, [layoutPattern, createCell, colors.length])
+  }, [layoutPattern, createCell])
 
   // Initialize grid
   useEffect(() => {
@@ -311,24 +301,6 @@ export default function RaePage() {
     }
   }, [renderVisibleCells])
 
-  // Toggle color overlays
-  const toggleColors = () => {
-    setColorMode(!colorMode)
-    
-    // Update existing cells
-    if (gridRef.current) {
-      const cells = gridRef.current.querySelectorAll(`.${styles['photo-cell']}`)
-      cells.forEach((cell, i) => {
-        const element = cell as HTMLElement
-        if (!colorMode) {
-          element.classList.add(styles['overlay-color'], styles[colors[i % colors.length]])
-        } else {
-          element.classList.remove(styles['overlay-color'], ...colors.map(c => styles[c]))
-        }
-      })
-    }
-  }
-
   const closeZoom = () => {
     setIsZoomOpen(false)
   }
@@ -367,13 +339,7 @@ export default function RaePage() {
       )}
 
       {/* Control Panel */}
-      <div className="fixed top-10 left-1/2 -translate-x-1/2 flex gap-2.5 z-[1000] bg-white/95 backdrop-blur px-4 py-3 rounded-full shadow-lg">
-        <button 
-          className={`${styles['control-btn']} ${colorMode ? styles['active'] : ''}`}
-          onClick={toggleColors}
-        >
-          Colors
-        </button>
+      <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[1000] bg-white/95 backdrop-blur px-4 py-3 rounded-full shadow-lg">
         <button 
           className={styles['control-btn']}
           onClick={() => router.push('/')}
