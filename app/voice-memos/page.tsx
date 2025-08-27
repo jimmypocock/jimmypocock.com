@@ -28,7 +28,7 @@ export default function VoiceMemosPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#f5f5f7] to-[#e8e8ed] flex flex-col justify-center items-center px-5 py-10">
       {/* Go Home Button */}
       <button 
-        className="fixed top-6 left-6 z-50 bg-white/95 backdrop-blur px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-sm font-medium text-[#1d1d1f] hover:bg-white"
+        className="absolute top-4 left-4 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-sm text-black"
         onClick={() => router.push('/')}
       >
         Go Home

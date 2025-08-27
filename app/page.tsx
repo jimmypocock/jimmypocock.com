@@ -5,18 +5,43 @@ import Image from 'next/image';
 import { 
   Github, 
   Linkedin, 
-  BellRing,
-  Tent, 
-  Mic, 
-  Play, 
-  Bot,
-  Dumbbell, 
+  // BellRing,
+  // Tent, 
+  // Mic, 
+  // Play, 
+  // Bot,
+  // Dumbbell, 
   Music, 
   Dog, 
-  Brain 
+  Brain,
+  type LucideIcon
 } from 'lucide-react';
 
+interface LinkItem {
+  icon: LucideIcon;
+  prefix?: string;
+  text: string;
+  href: string;
+  title?: string;
+  suffix?: string;
+  external?: boolean;
+}
+
 export default function Home() {
+  // const portfolioItems: LinkItem[] = [
+  //   { icon: Tent, prefix: 'i built', text: 'roverpass', href: 'https://www.roverpass.com', title: 'roverpass.com', external: true },
+  //   { icon: Mic, prefix: 'i built', text: 'vocal technique translator', href: 'https://www.vocaltechniquetranslator.com', title: 'vocaltechniquetranslator.com', external: true },
+  //   { icon: Play, prefix: 'i built', text: 'songsnips', href: 'https://www.songsnips.com', title: 'songsnips.com', external: true },
+  //   { icon: BellRing, prefix: 'i built', text: 'aws delta cost usage notification', href: 'https://github.com/jimmypocock/AWSDeltaCostUsage', title: 'AWSDeltaCostUsage', external: true },
+  //   { icon: Bot, prefix: 'currently building', text: 'greg', href: 'https://github.com/jimmypocock/Greg', title: 'greg', external: true },
+  //   { icon: Dumbbell, prefix: 'currently building', text: 'famefit', href: 'https://www.famefitapp.com', title: 'famefitapp.com', external: true },
+  // ];
+
+  const personalItems: LinkItem[] = [
+    { icon: Music, prefix: 'hear my', text: 'music', href: '/voice-memos' },
+    { icon: Dog, prefix: 'see my', text: 'dog', href: '/rae' },
+    { icon: Brain, prefix: 'read my', text: 'thoughts', href: '/thoughts' },
+  ];
   return (
     <div className="fixed inset-0 bg-black overflow-visible">
       {/* Image - scaled 300% width, 140% height */}
@@ -75,132 +100,25 @@ export default function Home() {
           {/* Divider */}
           <div className="w-16 h-px bg-gray-400 my-6" />
           
-          {/* Portfolio Section */}
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Tent className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              i built{' '}
-              <a 
-                href="https://www.roverpass.com" 
-                title="roverpass.com"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                roverpass
-              </a>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Mic className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              i built{' '}
-              <a 
-                href="https://www.vocaltechniquetranslator.com" 
-                title="vocaltechniquetranslator.com"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                vocal technique translator
-              </a>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Play className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              i built{' '}
-              <a 
-                href="https://www.songsnips.com" 
-                title="songsnips.com"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                songsnips
-              </a>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <BellRing className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              i built{' '}
-              <a 
-                href="https://github.com/jimmypocock/AWSDeltaCostUsage" 
-                title="AWSDeltaCostUsage"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                aws delta cost usage notification
-              </a>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Bot className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              currently building{' '}
-              <a 
-                href="https://github.com/jimmypocock/Greg" 
-                title="greg"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                greg
-              </a>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Dumbbell className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              currently building{' '}
-              <a 
-                href="https://www.famefitapp.com" 
-                title="famefitapp.com"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
-                target="_blank"
-              >
-                famefit
-              </a>
-            </span>
-          </p>
-          
-          {/* Divider */}
-          <div className="w-16 h-px bg-gray-400 my-6" />
-          
           {/* Personal Section */}
-          <p className="text-gray-300 text-sm md:text-lg mb-2 tracking-wider flex items-center gap-3">
-            <Music className="w-4 h-4 text-white flex-shrink-0" />
-            <span>
-              hear my{' '}
-              <Link 
-                href="/voice-memos" 
-                className="text-white font-medium tracking-widest hover:opacity-70 transition-opacity duration-300"
-              >
-                music
-              </Link>
-            </span>
-          </p>
-          <p className="text-gray-300 text-sm md:text-lg mb-2 tracking-wider flex items-center gap-3">
-            <Dog className="w-4 h-4 text-white flex-shrink-0" />
-            <span>
-              see my{' '}
-              <Link 
-                href="/rae" 
-                className="text-white font-medium tracking-widest hover:opacity-70 transition-opacity duration-300"
-              >
-                dog
-              </Link>
-            </span>
-          </p>
-          <p className="text-gray-300 text-sm md:text-lg mb-2 tracking-wider flex items-center gap-3">
-            <Brain className="w-4 h-4 text-white flex-shrink-0" />
-            <span>
-              read my{' '}
-              <Link 
-                href="/thoughts" 
-                className="text-white font-medium tracking-widest hover:opacity-70 transition-opacity duration-300"
-              >
-                thoughts
-              </Link>
-            </span>
-          </p>
+          {personalItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <p key={index} className="text-gray-300 text-sm md:text-lg mb-2 tracking-wider flex items-center gap-3">
+                <Icon className="w-4 h-4 text-white flex-shrink-0" />
+                <span>
+                  {item.prefix}{' '}
+                  <Link 
+                    href={item.href} 
+                    className="text-white font-medium tracking-widest hover:opacity-70 transition-opacity duration-300"
+                  >
+                    {item.text}
+                  </Link>
+                  {item.suffix}
+                </span>
+              </p>
+            );
+          })}
         </div>
         </div>
       </div>

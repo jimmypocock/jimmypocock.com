@@ -426,11 +426,11 @@ export default function RaePage() {
         </div>
       )}
 
-      {/* Control Panel */}
-      <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[1000] bg-white/95 backdrop-blur px-4 py-3 rounded-full shadow-lg">
-        <button 
-          className={styles['control-btn']}
+      {/* Go Home Button */}
+      <div className="absolute top-4 left-4 z-[1000]">
+        <button
           onClick={() => router.push('/')}
+          className="px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-sm text-black"
         >
           Go Home
         </button>

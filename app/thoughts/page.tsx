@@ -9,5 +9,8 @@ export const metadata = {
 export default function ThoughtsPage() {
   const thoughts = getAllThoughts();
   
-  return <ThoughtsMindMap thoughts={thoughts} />;
+  // Only show thoughts that have a published_on date
+  const publishedThoughts = thoughts.filter(t => t.publishedOn);
+  
+  return <ThoughtsMindMap thoughts={publishedThoughts} />;
 }

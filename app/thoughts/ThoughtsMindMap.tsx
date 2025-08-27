@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Thought } from '@/lib/thoughts'
 
 interface NodePosition {
   x: number
   y: number
-  vx: number
-  vy: number
+  radius: number
+  angle: number
 }
 
 interface ThoughtsMindMapProps {
@@ -21,126 +20,115 @@ export default function ThoughtsMindMap({ thoughts }: ThoughtsMindMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
-  const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(new Map())
-  const animationFrameRef = useRef<number | undefined>(undefined)
+  const [selectedNode, setSelectedNode] = useState<string | null>(null)
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
+  const [viewOffset, setViewOffset] = useState({ x: 0, y: 0 })
 
-  // Initialize node positions
-  useEffect(() => {
+  // Sort thoughts by publishedOn date (newest first) and calculate positions
+  const nodeData = useMemo(() => {
+    const sorted = [...thoughts].sort((a, b) => {
+      const dateA = new Date(a.publishedOn || '1970-01-01').getTime()
+      const dateB = new Date(b.publishedOn || '1970-01-01').getTime()
+      return dateB - dateA
+    })
+
+    // Calculate connections based on shared tags
+    const connections = new Map<string, Set<string>>()
+    thoughts.forEach(thought => {
+      if (!thought.tags || thought.tags.length === 0) return
+      
+      const relatedSlugs = new Set<string>()
+      thoughts.forEach(other => {
+        if (other.slug === thought.slug) return
+        if (!other.tags || other.tags.length === 0) return
+        
+        // Check if they share any tags
+        const sharedTags = thought.tags?.filter(tag => other.tags?.includes(tag)) || []
+        if (sharedTags.length > 0) {
+          relatedSlugs.add(other.slug)
+        }
+      })
+      
+      if (relatedSlugs.size > 0) {
+        connections.set(thought.slug, relatedSlugs)
+      }
+    })
+
+    // Calculate connection counts for sizing (both outgoing and incoming)
+    const connectionCounts = new Map<string, number>()
+    thoughts.forEach(thought => {
+      let count = connections.get(thought.slug)?.size || 0
+      // Count incoming connections too
+      connections.forEach((targets, source) => {
+        if (targets.has(thought.slug) && source !== thought.slug) {
+          count++
+        }
+      })
+      connectionCounts.set(thought.slug, count)
+    })
+
+    // Position nodes in concentric circles based on date
     const positions = new Map<string, NodePosition>()
-    const centerX = window.innerWidth / 2
-    const centerY = window.innerHeight / 2
+    const centerX = dimensions.width / 2
+    const centerY = dimensions.height / 2
     
-    // Start with a wider circular arrangement with some randomness
-    thoughts.forEach((thought, index) => {
-      const angle = (index / thoughts.length) * Math.PI * 2
-      const baseRadius = Math.min(500, thoughts.length * 20) // Much wider radius
-      const radius = baseRadius + (Math.random() - 0.5) * 100 // Add randomness
+    // Group by year/month for better organization
+    const rings = 4 // Number of concentric circles
+    const itemsPerRing = Math.ceil(sorted.length / rings)
+    
+    sorted.forEach((thought, index) => {
+      const ring = Math.floor(index / itemsPerRing)
+      const indexInRing = index % itemsPerRing
+      const itemsInThisRing = Math.min(itemsPerRing, sorted.length - ring * itemsPerRing)
+      
+      const radius = 180 + ring * 240 // Start at 180px, expand by 240px per ring (20% more spacing)
+      const angle = (indexInRing / itemsInThisRing) * Math.PI * 2 - Math.PI / 2 // Start from top
       
       positions.set(thought.slug, {
-        x: centerX + Math.cos(angle) * radius + (Math.random() - 0.5) * 100,
-        y: centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * 100,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2
+        x: centerX + Math.cos(angle) * radius,
+        y: centerY + Math.sin(angle) * radius,
+        radius,
+        angle
       })
     })
 
-    setNodePositions(positions)
-  }, [thoughts])
+    return { sorted, positions, connectionCounts, connections }
+  }, [thoughts, dimensions])
 
-  // Force simulation for natural positioning
+  // Update dimensions on mount and resize
   useEffect(() => {
-    const simulate = () => {
-      const newPositions = new Map(nodePositions)
-      const damping = 0.92
-      const repulsion = 8000 // Much stronger repulsion for spacing
-      const attraction = 0.005 // Weaker attraction to allow more spread
-      const centerPull = 0.0002 // Very weak center pull
-
-      // Apply forces
-      thoughts.forEach(thought1 => {
-        const pos1 = newPositions.get(thought1.slug)
-        if (!pos1) return
-
-        let fx = 0, fy = 0
-
-        // Repulsion between all nodes
-        thoughts.forEach(thought2 => {
-          if (thought1.slug === thought2.slug) return
-          const pos2 = newPositions.get(thought2.slug)
-          if (!pos2) return
-
-          const dx = pos1.x - pos2.x
-          const dy = pos1.y - pos2.y
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1
-          
-          // Repel at all distances, stronger when closer
-          if (dist < 400) { // Increased range
-            const force = repulsion / (dist * dist)
-            fx += (dx / dist) * force
-            fy += (dy / dist) * force
-          }
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        setDimensions({
+          width: containerRef.current.clientWidth,
+          height: containerRef.current.clientHeight
         })
-
-        // Moderate attraction along connections
-        if (thought1.connections) {
-          thought1.connections.forEach(conn => {
-            const pos2 = newPositions.get(conn.target)
-            if (!pos2) return
-
-            const dx = pos2.x - pos1.x
-            const dy = pos2.y - pos1.y
-            const dist = Math.sqrt(dx * dx + dy * dy)
-            
-            // Target distance of 200-250 pixels for connected nodes
-            const targetDist = 225
-            const force = attraction * (dist - targetDist)
-
-            fx += (dx / dist) * force
-            fy += (dy / dist) * force
-          })
-        }
-
-        // Also check reverse connections
-        thoughts.forEach(thought2 => {
-          if (thought2.connections) {
-            thought2.connections.forEach(conn => {
-              if (conn.target === thought1.slug) {
-                const pos2 = newPositions.get(thought2.slug)
-                if (!pos2) return
-
-                const dx = pos2.x - pos1.x
-                const dy = pos2.y - pos1.y
-                const dist = Math.sqrt(dx * dx + dy * dy)
-                
-                const targetDist = 225 // Match the forward connection distance
-                const force = attraction * (dist - targetDist)
-
-                fx += (dx / dist) * force
-                fy += (dy / dist) * force
-              }
-            })
-          }
-        })
-
-        // Center pull
-        const centerX = window.innerWidth / 2
-        const centerY = window.innerHeight / 2
-        fx += (centerX - pos1.x) * centerPull
-        fy += (centerY - pos1.y) * centerPull
-
-        // Update velocity and position
-        pos1.vx = pos1.vx * damping + fx * 0.02 // Increased force multiplier
-        pos1.vy = pos1.vy * damping + fy * 0.02
-        pos1.x += pos1.vx
-        pos1.y += pos1.vy
-      })
-
-      setNodePositions(newPositions)
+      }
     }
 
-    const interval = setInterval(simulate, 30) // Faster updates
-    return () => clearInterval(interval)
-  }, [nodePositions, thoughts])
+    updateDimensions()
+    window.addEventListener('resize', updateDimensions)
+    return () => window.removeEventListener('resize', updateDimensions)
+  }, [])
+
+  // Handle scroll/pan with mouse wheel
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      
+      // Update view offset based on scroll
+      setViewOffset(prev => ({
+        x: prev.x - e.deltaX,
+        y: prev.y - e.deltaY
+      }))
+    }
+
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    return () => container.removeEventListener('wheel', handleWheel)
+  }, [])
 
   // Draw connections on canvas
   useEffect(() => {
@@ -151,280 +139,219 @@ export default function ThoughtsMindMap({ thoughts }: ThoughtsMindMapProps) {
     if (!ctx) return
 
     // Set canvas size
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvas.width = dimensions.width
+    canvas.height = dimensions.height
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw all connections
-      thoughts.forEach(thought => {
-        const fromPos = nodePositions.get(thought.slug)
-        if (!fromPos || !thought.connections) return
+    // Draw connections based on shared tags
+    nodeData.connections.forEach((targets, sourceSlug) => {
+      const fromPos = nodeData.positions.get(sourceSlug)
+      if (!fromPos) return
 
-        thought.connections.forEach(conn => {
-          const toPos = nodePositions.get(conn.target)
-          if (!toPos) return
+      targets.forEach(targetSlug => {
+        const toPos = nodeData.positions.get(targetSlug)
+        if (!toPos) return
 
-          // Set connection color based on type
-          const colors: Record<string, string> = {
-            'builds-upon': '#4ecdc4',
-            'questions': '#ff6b6b',
-            'answers': '#52c41a',
-            'contradicts': '#f5222d',
-            'references': '#faad14'
-          }
-          
-          ctx.strokeStyle = colors[conn.type] || '#666'
-          ctx.lineWidth = 2
-          ctx.globalAlpha = hoveredNode === thought.slug || hoveredNode === conn.target ? 0.8 : 0.3
+        // Avoid drawing duplicate connections (A->B and B->A)
+        if (sourceSlug > targetSlug) {
+          const reverseConnection = nodeData.connections.get(targetSlug)
+          if (reverseConnection?.has(sourceSlug)) return
+        }
 
-          // Draw curved line
-          ctx.beginPath()
-          ctx.moveTo(fromPos.x, fromPos.y)
-          
-          const midX = (fromPos.x + toPos.x) / 2
-          const midY = (fromPos.y + toPos.y) / 2
-          const curvature = 20
-          
-          ctx.quadraticCurveTo(
-            midX + curvature,
-            midY - curvature,
-            toPos.x,
-            toPos.y
-          )
-          ctx.stroke()
+        // Determine if this connection should be highlighted
+        const isHighlighted = 
+          hoveredNode === sourceSlug || 
+          hoveredNode === targetSlug ||
+          selectedNode === sourceSlug ||
+          selectedNode === targetSlug
 
-          // Draw arrow head
-          const angle = Math.atan2(toPos.y - midY, toPos.x - midX)
-          const arrowLength = 10
-          
-          ctx.beginPath()
-          ctx.moveTo(toPos.x, toPos.y)
-          ctx.lineTo(
-            toPos.x - arrowLength * Math.cos(angle - Math.PI / 6),
-            toPos.y - arrowLength * Math.sin(angle - Math.PI / 6)
-          )
-          ctx.moveTo(toPos.x, toPos.y)
-          ctx.lineTo(
-            toPos.x - arrowLength * Math.cos(angle + Math.PI / 6),
-            toPos.y - arrowLength * Math.sin(angle + Math.PI / 6)
-          )
-          ctx.stroke()
-        })
+        // Simple gray lines, darker when highlighted
+        ctx.strokeStyle = isHighlighted ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.08)'
+        ctx.lineWidth = isHighlighted ? 2 : 1
+
+        // Draw straight line with view offset
+        ctx.beginPath()
+        ctx.moveTo(fromPos.x + viewOffset.x, fromPos.y + viewOffset.y)
+        ctx.lineTo(toPos.x + viewOffset.x, toPos.y + viewOffset.y)
+        ctx.stroke()
       })
-
-      ctx.globalAlpha = 1
-    }
-
-    draw()
-    animationFrameRef.current = requestAnimationFrame(function animate() {
-      draw()
-      animationFrameRef.current = requestAnimationFrame(animate)
     })
+  }, [nodeData, hoveredNode, selectedNode, dimensions, viewOffset])
 
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-    }
-  }, [nodePositions, thoughts, hoveredNode])
+  // Calculate node size based on connections
+  const getNodeSize = (slug: string): number => {
+    const count = nodeData.connectionCounts.get(slug) || 0
+    return 30 + Math.min(count * 5, 30) // Base 30px, max 60px radius for larger nodes with text
+  }
+
+  // Calculate node color based on date (opacity)
+  const getNodeOpacity = (thought: Thought): number => {
+    const index = nodeData.sorted.findIndex(t => t.slug === thought.slug)
+    return 1 - (index / nodeData.sorted.length) * 0.6 // Newest: 1, oldest: 0.4
+  }
 
   const handleNodeClick = (slug: string) => {
-    router.push(`/thoughts/${slug}`)
+    if (selectedNode === slug) {
+      // Double click to navigate
+      router.push(`/thoughts/${slug}`)
+    } else {
+      setSelectedNode(slug)
+    }
   }
 
-  const truncateTitle = (title: string, maxLength: number = 25): string => {
-    return title.length > maxLength ? title.substring(0, maxLength - 3) + '...' : title
-  }
+  // Close sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      
+      // Check if click is outside sidebar and not on a node
+      const sidebar = document.querySelector('.sidebar-panel')
+      const isNode = target.closest('[data-node]')
+      
+      if (selectedNode && sidebar && !sidebar.contains(target) && !isNode) {
+        setSelectedNode(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [selectedNode])
+
+  const selectedThought = thoughts.find(t => t.slug === selectedNode)
 
   return (
-    <div 
-      ref={containerRef}
-      className="w-screen h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-auto"
-    >
-      <style jsx global>{`
-        .mind-node {
-          position: absolute;
-          transform: translate(-50%, -50%);
-          padding: 12px 20px;
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 25px;
-          color: white;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 13px;
-          text-align: center;
-          max-width: 150px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          z-index: 10;
-        }
+    <div className="flex h-screen bg-gray-50">
+      {/* Main Canvas Area */}
+      <div 
+        ref={containerRef}
+        className="flex-1 relative overflow-hidden"
+      >
+        {/* Connection Canvas */}
+        <canvas 
+          ref={canvasRef}
+          className="absolute inset-0"
+          style={{ pointerEvents: 'none' }}
+        />
 
-        .mind-node:hover {
-          transform: translate(-50%, -50%) scale(1.1);
-          background: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.3);
-          box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-          z-index: 20;
-        }
+        {/* Thought Nodes */}
+        {thoughts.map(thought => {
+          const pos = nodeData.positions.get(thought.slug)
+          if (!pos) return null
 
-        .mind-node.has-connections {
-          background: rgba(78, 205, 196, 0.1);
-          border-color: rgba(78, 205, 196, 0.3);
-        }
+          const size = getNodeSize(thought.slug)
+          const opacity = getNodeOpacity(thought)
+          const isHovered = hoveredNode === thought.slug
+          const isSelected = selectedNode === thought.slug
+          const hasConnections = (nodeData.connectionCounts.get(thought.slug) || 0) > 0
 
-        .info-panel {
-          position: fixed;
-          top: 20px;
-          left: 20px;
-          padding: 20px;
-          background: rgba(0, 0, 0, 0.6);
-          backdrop-filter: blur(10px);
-          border-radius: 15px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: white;
-          max-width: 250px;
-          z-index: 100;
-        }
+          return (
+            <div
+              key={thought.slug}
+              data-node="true"
+              className="absolute flex items-center justify-center cursor-pointer"
+              style={{
+                left: `${pos.x + viewOffset.x}px`,
+                top: `${pos.y + viewOffset.y}px`,
+                width: `${size * 2}px`,
+                height: `${size * 2}px`,
+                transform: `translate(-50%, -50%) ${isHovered ? 'scale(1.1)' : ''} ${isSelected ? 'scale(1.15)' : ''}`,
+                transition: 'transform 200ms',  // Only transition the scale, not position
+                zIndex: isHovered || isSelected ? 20 : 10
+              }}
+              onClick={() => handleNodeClick(thought.slug)}
+              onMouseEnter={() => setHoveredNode(thought.slug)}
+              onMouseLeave={() => setHoveredNode(null)}
+            >
+              {/* Node Circle */}
+              <div
+                className="absolute inset-0 rounded-full flex items-center justify-center overflow-hidden"
+                style={{
+                  backgroundColor: hasConnections ? '#3b82f6' : '#9ca3af',
+                  opacity: opacity,
+                  border: isSelected ? '4px solid #1e40af' : 'none',
+                  boxShadow: isHovered ? '0 0 30px rgba(59, 130, 246, 0.5)' : '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              >
+                {/* Text inside node */}
+                <div className="text-white text-center px-2" style={{ fontSize: `${Math.max(10, size / 4)}px` }}>
+                  {thought.title.split(' ').slice(0, 2).join(' ')}
+                </div>
+              </div>
+            </div>
+          )
+        })}
 
-        .info-title {
-          font-size: 24px;
-          font-weight: 300;
-          margin-bottom: 10px;
-          background: linear-gradient(135deg, #4ecdc4 0%, #ff6b6b 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .info-subtitle {
-          font-size: 12px;
-          opacity: 0.7;
-          line-height: 1.5;
-        }
-
-        .legend {
-          margin-top: 15px;
-          padding-top: 15px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 6px;
-          font-size: 11px;
-        }
-
-        .legend-color {
-          width: 20px;
-          height: 2px;
-        }
-      `}</style>
-
-      {/* Canvas for connections */}
-      <canvas 
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          pointerEvents: 'none',
-          zIndex: 1
-        }}
-      />
-
-      {/* Thought Nodes */}
-      {thoughts.map(thought => {
-        const pos = nodePositions.get(thought.slug)
-        if (!pos) return null
-
-        const hasConnections = (thought.connections && thought.connections.length > 0) ||
-          thoughts.some(t => t.connections?.some(c => c.target === thought.slug))
-
-        return (
-          <div
-            key={thought.slug}
-            className={`mind-node ${hasConnections ? 'has-connections' : ''}`}
-            style={{
-              left: `${pos.x}px`,
-              top: `${pos.y}px`,
-            }}
-            onClick={() => handleNodeClick(thought.slug)}
-            onMouseEnter={() => setHoveredNode(thought.slug)}
-            onMouseLeave={() => setHoveredNode(null)}
-            title={thought.title}
+        <div className="absolute top-4 left-4">
+          <button
+            onClick={() => router.push('/')}
+            className="px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-sm text-black"
           >
-            {truncateTitle(thought.title)}
-          </div>
-        )
-      })}
-
-      {/* Info Panel */}
-      <div className="info-panel">
-        <h1 className="info-title">Mind Map</h1>
-        <p className="info-subtitle">
-          Navigate through interconnected thoughts. 
-          Click any node to explore.
-        </p>
-        
-        <div className="legend">
-          <div className="legend-item">
-            <div className="legend-color" style={{ background: '#4ecdc4' }} />
-            <span>Builds Upon</span>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color" style={{ background: '#ff6b6b' }} />
-            <span>Questions</span>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color" style={{ background: '#52c41a' }} />
-            <span>Answers</span>
-          </div>
+            Go Home
+          </button>
         </div>
       </div>
 
-      {/* Back to Home */}
-      <Link
-        href="/"
-        className="fixed bottom-5 left-5 px-6 py-3 bg-white/5 backdrop-blur-md border border-white/20 text-white rounded-full text-xs uppercase tracking-wider hover:bg-white/10 hover:border-white/30 transition-all z-50"
-      >
-        Back to Home
-      </Link>
+      {/* Sidebar for Selected Thought */}
+      <div className={`sidebar-panel w-[600px] bg-white shadow-2xl transition-transform duration-300 ${selectedNode ? 'translate-x-0' : 'translate-x-full absolute right-0'} h-full overflow-y-auto`}>
+        {selectedThought && (
+          <div className="p-8">
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-2xl font-bold">{selectedThought.title}</h2>
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="text-sm text-gray-500 mb-6">
+              {selectedThought.readingTime} min read • {selectedThought.publishedOn}
+            </div>
+            
+            {selectedThought.excerpt && (
+              <p className="text-gray-700 mb-8 leading-relaxed">
+                {selectedThought.excerpt}
+              </p>
+            )}
 
-      {/* Hover Info */}
-      {hoveredNode && (
-        <div
-          style={{
-            position: 'absolute',
-            left: `${(nodePositions.get(hoveredNode)?.x || 0)}px`,
-            top: `${((nodePositions.get(hoveredNode)?.y || 0) - 50)}px`,
-            transform: 'translateX(-50%)',
-            background: 'rgba(0, 0, 0, 0.9)',
-            color: 'white',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '11px',
-            pointerEvents: 'none',
-            zIndex: 1000,
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            maxWidth: '200px',
-            textAlign: 'center'
-          }}
-        >
-          <div style={{ fontWeight: 'bold' }}>
-            {thoughts.find(t => t.slug === hoveredNode)?.title}
+            {(() => {
+              const relatedThoughts = nodeData.connections.get(selectedThought.slug)
+              if (!relatedThoughts || relatedThoughts.size === 0) return null
+              
+              return (
+                <div className="mb-8">
+                  <h4 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider">Related Thoughts</h4>
+                  <div className="space-y-2">
+                    {Array.from(relatedThoughts).map(targetSlug => {
+                      const target = thoughts.find(t => t.slug === targetSlug)
+                      if (!target) return null
+                      return (
+                        <button
+                          key={targetSlug}
+                          onClick={() => setSelectedNode(targetSlug)}
+                          className="block w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+                        >
+                          <div className="font-medium text-gray-900">{target.title}</div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+
+            <button
+              onClick={() => router.push(`/thoughts/${selectedThought.slug}`)}
+              className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+            >
+              Read Full Post →
+            </button>
           </div>
-          <div style={{ opacity: 0.7, marginTop: '4px' }}>
-            {thoughts.find(t => t.slug === hoveredNode)?.readingTime} min read
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

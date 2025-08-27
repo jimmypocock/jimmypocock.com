@@ -48,13 +48,15 @@ export default async function ThoughtPage({ params }: { params: Promise<{ slug: 
             {thought.title}
           </h1>
           
-          <time className="text-sm text-gray-400">
-            {new Date(thought.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
+          {thought.publishedOn && (
+            <time className="text-sm text-gray-400">
+              {new Date(thought.publishedOn).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+          )}
           
           <div className="mt-8 prose prose-invert max-w-none">
             <div className="whitespace-pre-wrap text-gray-300 leading-relaxed">
