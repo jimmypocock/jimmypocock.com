@@ -28,6 +28,7 @@ export default function RaePage() {
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const [zoomedImage, setZoomedImage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
   
   const containerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -35,6 +36,16 @@ export default function RaePage() {
   
   // Detect mobile device
   const [isMobile, setIsMobile] = useState(false)
+  
+  // Global error handler for Safari crashes
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      console.error('Global error:', event.error)
+      setHasError(true)
+    }
+    window.addEventListener('error', handleError)
+    return () => window.removeEventListener('error', handleError)
+  }, [])
   
   // Function to randomly assign aspect ratios to images
   const getRandomAspectRatio = (): AspectRatioKey => {
@@ -59,9 +70,10 @@ export default function RaePage() {
     // Create array of all available image indices
     const allIndices = Array.from({ length: imageCount }, (_, i) => i + 1)
     
-    // Randomly select subset for both mobile and desktop
-    const mobileImageLimit = 25
-    const desktopImageLimit = 100
+    // Randomly select subset - fewer for Safari/iOS due to memory limits
+    const isSafari = typeof navigator !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    const mobileImageLimit = isSafari ? 15 : 25  // Even fewer for Safari
+    const desktopImageLimit = isSafari ? 50 : 100  // Limit desktop Safari too
     const imageLimit = isMobile ? mobileImageLimit : desktopImageLimit
     
     // Shuffle and select random subset
@@ -91,9 +103,13 @@ export default function RaePage() {
         }
       }
       
-      // Production mobile detection: check user agent
+      // Production mobile detection: check user agent AND Safari
       const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      setIsMobile(isMobileUserAgent)
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      
+      // Treat ALL iOS/Safari as mobile for memory safety
+      setIsMobile(isMobileUserAgent || isIOS || (isSafari && window.innerWidth <= 1024))
     }
     checkMobile()
   }, [])
@@ -261,17 +277,22 @@ export default function RaePage() {
           if (!renderedCells.current.has(cellKey)) {
             shouldBeVisible.add(cellKey)
             
-            // Create and add the cell
-            const cell = createCell(
-              patternCell.photo,
-              cellWorldCol,
-              cellWorldRow,
-              patternCell.spanX,
-              patternCell.spanY
-            )
-            
-            grid.appendChild(cell)
-            renderedCells.current.add(cellKey)
+            try {
+              // Create and add the cell
+              const cell = createCell(
+                patternCell.photo,
+                cellWorldCol,
+                cellWorldRow,
+                patternCell.spanX,
+                patternCell.spanY
+              )
+              
+              grid.appendChild(cell)
+              renderedCells.current.add(cellKey)
+            } catch (error) {
+              console.error('Failed to create cell:', error)
+              // Continue without crashing
+            }
           }
         }
       }
@@ -356,6 +377,26 @@ export default function RaePage() {
     document.addEventListener('keydown', handleKeydown)
     return () => document.removeEventListener('keydown', handleKeydown)
   }, [])
+
+  // Show error fallback if crashed
+  if (hasError) {
+    return (
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#fafafa] p-8">
+        <div className="text-center max-w-md">
+          <h1 className="text-2xl mb-4">Oops! Something went wrong</h1>
+          <p className="text-gray-600 mb-6">
+            This page requires significant memory. Please try using a desktop browser or Chrome on mobile for the best experience.
+          </p>
+          <button 
+            className="px-6 py-3 bg-black text-white rounded-full"
+            onClick={() => router.push('/')}
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#fafafa]">
