@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import styles from './mosaic.module.css'
 
 // Image aspect ratios and their grid spans
@@ -25,7 +25,6 @@ interface PhotoData {
 
 export default function RaePage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const [zoomedImage, setZoomedImage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -83,37 +82,26 @@ export default function RaePage() {
   
   useEffect(() => {
     const checkMobile = () => {
-      // Check for ?mobile=true query parameter for testing
-      const forceMobile = searchParams.get('mobile') === 'true'
-      
-      if (forceMobile) {
-        setIsMobile(true)
-        return
+      // In development, check for ?mobile=true query parameter for testing
+      if (process.env.NODE_ENV === 'development') {
+        const params = new URLSearchParams(window.location.search)
+        if (params.get('mobile') === 'true') {
+          setIsMobile(true)
+          return
+        }
       }
       
-      // Better mobile detection: check for touch support AND small screen
-      // or common mobile user agents
-      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-      const isSmallScreen = window.innerWidth <= 768
+      // Production mobile detection: check user agent
       const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      
-      // Consider it mobile if:
-      // 1. It has a mobile user agent, OR
-      // 2. It has touch support AND a small screen
-      const mobile = isMobileUserAgent || (hasTouch && isSmallScreen)
-      setIsMobile(mobile)
+      setIsMobile(isMobileUserAgent)
     }
     checkMobile()
-    
-    // Re-check on resize in case device orientation changes
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [searchParams])
+  }, [])
 
   // Base cell size and grid dimensions - smaller on mobile
-  const BASE_SIZE = isMobile ? 100 : 120 // pixels
-  const GRID_COLUMNS = isMobile ? 6 : 30 // Smaller grid for mobile - roughly fits 20 images
-  const GRID_ROWS = isMobile ? 8 : 30 // Smaller grid for mobile
+  const baseSize = isMobile ? 100 : 120 // pixels
+  const gridColumns = isMobile ? 6 : 30 // Smaller grid for mobile - roughly fits 20 images
+  const gridRows = isMobile ? 8 : 30 // Smaller grid for mobile
 
   // Pre-generate a layout pattern for the repeating grid
   const generateLayoutPattern = useCallback(() => {
@@ -130,8 +118,8 @@ export default function RaePage() {
     // Try to place each photo type in the grid
     let photoIndex = 0
     
-    for (let row = 0; row < GRID_ROWS; row += 2) {
-      for (let col = 0; col < GRID_COLUMNS; col += 2) {
+    for (let row = 0; row < gridRows; row += 2) {
+      for (let col = 0; col < gridColumns; col += 2) {
         // Check if this position is already occupied
         const key = `${col},${row}`
         if (occupied.has(key)) continue
@@ -142,8 +130,8 @@ export default function RaePage() {
         
         // Check if this photo fits at this position
         let fits = true
-        for (let y = row; y < row + ratio.gridHeight && y < GRID_ROWS; y++) {
-          for (let x = col; x < col + ratio.gridWidth && x < GRID_COLUMNS; x++) {
+        for (let y = row; y < row + ratio.gridHeight && y < gridRows; y++) {
+          for (let x = col; x < col + ratio.gridWidth && x < gridColumns; x++) {
             if (occupied.has(`${x},${y}`)) {
               fits = false
               break
@@ -154,8 +142,8 @@ export default function RaePage() {
         
         if (fits) {
           // Mark cells as occupied
-          for (let y = row; y < row + ratio.gridHeight && y < GRID_ROWS; y++) {
-            for (let x = col; x < col + ratio.gridWidth && x < GRID_COLUMNS; x++) {
+          for (let y = row; y < row + ratio.gridHeight && y < gridRows; y++) {
+            for (let x = col; x < col + ratio.gridWidth && x < gridColumns; x++) {
               occupied.add(`${x},${y}`)
             }
           }
@@ -174,8 +162,8 @@ export default function RaePage() {
     }
     
     // Fill any remaining gaps with square images
-    for (let row = 0; row < GRID_ROWS; row++) {
-      for (let col = 0; col < GRID_COLUMNS; col++) {
+    for (let row = 0; row < gridRows; row++) {
+      for (let col = 0; col < gridColumns; col++) {
         if (!occupied.has(`${col},${row}`)) {
           pattern.push({
             photo: dogPhotos[photoIndex % dogPhotos.length],
@@ -190,7 +178,7 @@ export default function RaePage() {
     }
     
     return pattern
-  }, [dogPhotos])
+  }, [dogPhotos, gridColumns, gridRows])
 
   const [layoutPattern] = useState(() => generateLayoutPattern())
 
@@ -212,10 +200,10 @@ export default function RaePage() {
     cell.className = styles['photo-cell']
     cell.style.backgroundImage = `url(${photo.url})`
     cell.style.position = 'absolute'
-    cell.style.left = `${worldX * BASE_SIZE}px`
-    cell.style.top = `${worldY * BASE_SIZE}px`
-    cell.style.width = `${spanX * BASE_SIZE - 4}px` // -4 for gap
-    cell.style.height = `${spanY * BASE_SIZE - 4}px` // -4 for gap
+    cell.style.left = `${worldX * baseSize}px`
+    cell.style.top = `${worldY * baseSize}px`
+    cell.style.width = `${spanX * baseSize - 4}px` // -4 for gap
+    cell.style.height = `${spanY * baseSize - 4}px` // -4 for gap
     cell.dataset.worldX = worldX.toString()
     cell.dataset.worldY = worldY.toString()
     
@@ -225,7 +213,7 @@ export default function RaePage() {
     cell.addEventListener('click', () => openZoom(photo.url))
     
     return cell
-  }, [openZoom])
+  }, [openZoom, baseSize])
 
   // Render visible cells
   const renderVisibleCells = useCallback(() => {
@@ -241,10 +229,10 @@ export default function RaePage() {
     
     // Calculate visible bounds with buffer - smaller buffer for mobile
     const buffer = isMobile ? 200 : 500 // pixels - much smaller buffer on mobile
-    const visibleLeft = Math.floor((scrollLeft - buffer) / BASE_SIZE)
-    const visibleRight = Math.ceil((scrollLeft + viewportWidth + buffer) / BASE_SIZE)
-    const visibleTop = Math.floor((scrollTop - buffer) / BASE_SIZE)
-    const visibleBottom = Math.ceil((scrollTop + viewportHeight + buffer) / BASE_SIZE)
+    const visibleLeft = Math.floor((scrollLeft - buffer) / baseSize)
+    const visibleRight = Math.ceil((scrollLeft + viewportWidth + buffer) / baseSize)
+    const visibleTop = Math.floor((scrollTop - buffer) / baseSize)
+    const visibleBottom = Math.ceil((scrollTop + viewportHeight + buffer) / baseSize)
     
     // Track which cells should be visible
     const shouldBeVisible = new Set<string>()
@@ -253,8 +241,8 @@ export default function RaePage() {
     for (let worldRow = visibleTop; worldRow < visibleBottom; worldRow++) {
       for (let worldCol = visibleLeft; worldCol < visibleRight; worldCol++) {
         // Find which pattern cell this world coordinate maps to
-        const patternCol = ((worldCol % GRID_COLUMNS) + GRID_COLUMNS) % GRID_COLUMNS
-        const patternRow = ((worldRow % GRID_ROWS) + GRID_ROWS) % GRID_ROWS
+        const patternCol = ((worldCol % gridColumns) + gridColumns) % gridColumns
+        const patternRow = ((worldRow % gridRows) + gridRows) % gridRows
         
         // Find the pattern cell that covers this position
         const patternCell = layoutPattern.find(cell => {
@@ -304,7 +292,7 @@ export default function RaePage() {
         renderedCells.current.delete(key)
       }
     })
-  }, [layoutPattern, createCell, isMobile])
+  }, [layoutPattern, createCell, isMobile, baseSize, gridColumns, gridRows])
 
   // Initialize grid
   useEffect(() => {
@@ -331,7 +319,7 @@ export default function RaePage() {
     }
     
     setIsLoading(false)
-  }, [renderVisibleCells])
+  }, [renderVisibleCells, isMobile])
 
   // Handle scroll
   useEffect(() => {
@@ -353,7 +341,7 @@ export default function RaePage() {
       container.removeEventListener('scroll', handleScroll)
       clearTimeout(scrollTimeout)
     }
-  }, [renderVisibleCells])
+  }, [renderVisibleCells, isMobile])
 
   const closeZoom = () => {
     setIsZoomOpen(false)
@@ -384,8 +372,8 @@ export default function RaePage() {
             // Size based on grid dimensions × cell size
             // Mobile: 6 cols × 100px = 600px minimum, but we want some scrolling room
             // We'll make it 3x3 repetitions of the pattern for mobile
-            width: isMobile ? `${GRID_COLUMNS * BASE_SIZE * 3}px` : '20000px',
-            height: isMobile ? `${GRID_ROWS * BASE_SIZE * 3}px` : '20000px'
+            width: isMobile ? `${gridColumns * baseSize * 3}px` : '20000px',
+            height: isMobile ? `${gridRows * baseSize * 3}px` : '20000px'
           }}
         />
       </div>
