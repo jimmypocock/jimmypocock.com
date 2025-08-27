@@ -36,27 +36,36 @@ export default function RaePage() {
 
   const colors = useMemo(() => ['overlay-blue', 'overlay-purple', 'overlay-green', 'overlay-orange', 'overlay-pink'], [])
   
-  // Dog photos with aspect ratios
-  // You'll want to replace these with your S3 URLs and correct aspect ratios
-  const dogPhotos: PhotoData[] = useMemo(() => [
-    // Square (1:1) - Good for face close-ups
-    { url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb', aspectRatio: 'square' },
-    { url: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1', aspectRatio: 'square' },
+  // Function to randomly assign aspect ratios to images
+  const getRandomAspectRatio = (): AspectRatioKey => {
+    const ratios: AspectRatioKey[] = [
+      'square', 'square', 'square',  // 30% squares (they fill gaps well)
+      'landscape', 'landscape',        // 20% landscape
+      'portrait', 'portrait',          // 20% portrait
+      'landscape-wide',                // 10% wide landscape
+      'portrait-tall',                 // 10% tall portrait
+      'square-large',                  // 10% large squares
+    ]
+    return ratios[Math.floor(Math.random() * ratios.length)]
+  }
+
+  // Generate photo data with randomized aspect ratios
+  const dogPhotos: PhotoData[] = useMemo(() => {
+    const photos: PhotoData[] = []
     
-    // Landscape (3:2) - Good for dogs lying down or side profiles
-    { url: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b', aspectRatio: 'landscape' },
-    { url: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b', aspectRatio: 'landscape' },
+    // Using all 198 Rae images
+    const imageCount = 198
     
-    // Portrait (2:3) - Good for sitting dogs or full body shots
-    { url: 'https://images.unsplash.com/photo-1552053831-71594a27632d', aspectRatio: 'portrait' },
-    { url: 'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2', aspectRatio: 'portrait' },
+    for (let i = 1; i <= imageCount; i++) {
+      photos.push({
+        url: `/images/rae/rae-${i}.webp`,
+        aspectRatio: getRandomAspectRatio()
+      })
+    }
     
-    // Wide landscape (16:9) - Good for action shots or multiple dogs
-    { url: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e', aspectRatio: 'landscape-wide' },
-    { url: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9', aspectRatio: 'landscape-wide' },
-    
-    // Add more photos here with their aspect ratios
-  ], [])
+    // Shuffle the array for more randomness
+    return photos.sort(() => Math.random() - 0.5)
+  }, [])
 
   // Base cell size (the smallest unit)
   const BASE_SIZE = 120 // pixels
