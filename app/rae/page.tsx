@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import styles from './mosaic.module.css'
 
 // Image aspect ratios and their grid spans
@@ -25,6 +25,7 @@ interface PhotoData {
 
 export default function RaePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const [zoomedImage, setZoomedImage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -32,6 +33,9 @@ export default function RaePage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const renderedCells = useRef<Set<string>>(new Set())
+  
+  // Detect mobile device
+  const [isMobile, setIsMobile] = useState(false)
   
   // Function to randomly assign aspect ratios to images
   const getRandomAspectRatio = (): AspectRatioKey => {
@@ -50,10 +54,23 @@ export default function RaePage() {
   const dogPhotos: PhotoData[] = useMemo(() => {
     const photos: PhotoData[] = []
     
-    // Using all 198 Rae images
+    // Total available Rae images
     const imageCount = 198
     
-    for (let i = 1; i <= imageCount; i++) {
+    // Create array of all available image indices
+    const allIndices = Array.from({ length: imageCount }, (_, i) => i + 1)
+    
+    // Randomly select subset for both mobile and desktop
+    const mobileImageLimit = 25
+    const desktopImageLimit = 100
+    const imageLimit = isMobile ? mobileImageLimit : desktopImageLimit
+    
+    // Shuffle and select random subset
+    const indicesToUse = allIndices
+      .sort(() => Math.random() - 0.5)
+      .slice(0, Math.min(imageLimit, imageCount))
+    
+    for (const i of indicesToUse) {
       photos.push({
         url: `/images/rae/rae-${i}.webp`,
         aspectRatio: getRandomAspectRatio()
@@ -62,26 +79,41 @@ export default function RaePage() {
     
     // Shuffle the array for more randomness
     return photos.sort(() => Math.random() - 0.5)
-  }, [])
-
-  // Detect mobile device
-  const [isMobile, setIsMobile] = useState(false)
+  }, [isMobile])
   
   useEffect(() => {
     const checkMobile = () => {
-      const mobile = window.innerWidth <= 768 || 
-                    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      // Check for ?mobile=true query parameter for testing
+      const forceMobile = searchParams.get('mobile') === 'true'
+      
+      if (forceMobile) {
+        setIsMobile(true)
+        return
+      }
+      
+      // Better mobile detection: check for touch support AND small screen
+      // or common mobile user agents
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isSmallScreen = window.innerWidth <= 768
+      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      
+      // Consider it mobile if:
+      // 1. It has a mobile user agent, OR
+      // 2. It has touch support AND a small screen
+      const mobile = isMobileUserAgent || (hasTouch && isSmallScreen)
       setIsMobile(mobile)
     }
     checkMobile()
+    
+    // Re-check on resize in case device orientation changes
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  }, [searchParams])
 
   // Base cell size and grid dimensions - smaller on mobile
   const BASE_SIZE = isMobile ? 100 : 120 // pixels
-  const GRID_COLUMNS = isMobile ? 10 : 30 // Total columns in our repeating grid
-  const GRID_ROWS = isMobile ? 10 : 30 // Total rows in our repeating grid
+  const GRID_COLUMNS = isMobile ? 6 : 30 // Smaller grid for mobile - roughly fits 20 images
+  const GRID_ROWS = isMobile ? 8 : 30 // Smaller grid for mobile
 
   // Pre-generate a layout pattern for the repeating grid
   const generateLayoutPattern = useCallback(() => {
@@ -207,8 +239,8 @@ export default function RaePage() {
     const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
     
-    // Calculate visible bounds with buffer
-    const buffer = 500 // pixels
+    // Calculate visible bounds with buffer - smaller buffer for mobile
+    const buffer = isMobile ? 200 : 500 // pixels - much smaller buffer on mobile
     const visibleLeft = Math.floor((scrollLeft - buffer) / BASE_SIZE)
     const visibleRight = Math.ceil((scrollLeft + viewportWidth + buffer) / BASE_SIZE)
     const visibleTop = Math.floor((scrollTop - buffer) / BASE_SIZE)
@@ -257,7 +289,8 @@ export default function RaePage() {
       }
     }
     
-    // Remove cells that are no longer visible
+    // Remove cells that are no longer visible - more aggressive on mobile
+    const cleanupBuffer = isMobile ? 3 : 10
     const cells = grid.querySelectorAll('[data-world-x]')
     cells.forEach(cell => {
       const element = cell as HTMLElement
@@ -265,8 +298,8 @@ export default function RaePage() {
       const y = parseInt(element.dataset.worldY || '0')
       const key = `${x},${y}`
       
-      if (x < visibleLeft - 10 || x > visibleRight + 10 ||
-          y < visibleTop - 10 || y > visibleBottom + 10) {
+      if (x < visibleLeft - cleanupBuffer || x > visibleRight + cleanupBuffer ||
+          y < visibleTop - cleanupBuffer || y > visibleBottom + cleanupBuffer) {
         element.remove()
         renderedCells.current.delete(key)
       }
@@ -286,9 +319,16 @@ export default function RaePage() {
     // Initial render
     renderVisibleCells()
     
-    // Center the view
-    container.scrollLeft = 2000
-    container.scrollTop = 2000
+    // Center the view - calculated based on actual grid size
+    if (isMobile) {
+      const mobileWorldWidth = 6 * 100 * 3  // GRID_COLUMNS * BASE_SIZE * repetitions
+      const mobileWorldHeight = 8 * 100 * 3  // GRID_ROWS * BASE_SIZE * repetitions
+      container.scrollLeft = mobileWorldWidth / 2 - window.innerWidth / 2
+      container.scrollTop = mobileWorldHeight / 2 - window.innerHeight / 2
+    } else {
+      container.scrollLeft = 2000
+      container.scrollTop = 2000
+    }
     
     setIsLoading(false)
   }, [renderVisibleCells])
@@ -336,13 +376,16 @@ export default function RaePage() {
         ref={containerRef}
         className={styles['scroll-container']}
       >
-        {/* Infinite Grid */}
+        {/* Infinite Grid - properly sized for content */}
         <div 
           ref={gridRef}
           className={styles['infinite-grid']}
           style={{
-            width: '20000px',
-            height: '20000px'
+            // Size based on grid dimensions × cell size
+            // Mobile: 6 cols × 100px = 600px minimum, but we want some scrolling room
+            // We'll make it 3x3 repetitions of the pattern for mobile
+            width: isMobile ? `${GRID_COLUMNS * BASE_SIZE * 3}px` : '20000px',
+            height: isMobile ? `${GRID_ROWS * BASE_SIZE * 3}px` : '20000px'
           }}
         />
       </div>
