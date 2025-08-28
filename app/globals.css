@@ -18,16 +18,21 @@
   --text-3xl: 2rem;    /* 32px */
 }
 
-/* Light mode colors (default) */
+/* Apple-inspired color palette */
 :root {
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #2a2a2a;
-  --bg-accent: #333333;
-  --text-primary: #ffffff;
-  --text-secondary: #e0e0e0;
-  --text-accent: #a3a8b8;
-  --border-color: #3a3a3a;
-  --border-focus: #ff6100;
+  /* Backgrounds - dark grays, not pure black */
+  --bg-primary: #0a0a0b;      /* Near-black with warmth */
+  --bg-secondary: #161617;    /* Card backgrounds */
+  --bg-accent: #1d1d1f;       /* Elevated surfaces */
+  
+  /* Text - Apple's precise grays */
+  --text-primary: #f5f5f7;    /* Apple's off-white */
+  --text-secondary: #86868b;  /* Apple's secondary gray */
+  --text-accent: #6e6e73;     /* Tertiary text */
+  
+  /* Borders & dividers */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-focus: #0071e3;    /* Apple blue accent */
 
   /*
    * BRAND COLOR PALETTE
@@ -39,23 +44,24 @@
    * Neutral: #9ca3af (Gray-400) - Base neutral for text, borders, and backgrounds
    */
 
-  /* Brand colors */
-  --primary: #ff6100;      /* Primary brand color (Orange) */
-  --primary-hover: #e55500;
-  --secondary: #2196f3;    /* Secondary brand color */
-  --accent: #ff6100;       /* Accent brand color (Orange) */
-  --neutral: #9ca3af;      /* Neutral brand color (gray-400) */
+  /* Brand colors - muted for sophistication */
+  --primary: #0071e3;        /* Apple blue */
+  --primary-hover: #0077ed;
+  --secondary: #5e5ce6;      /* Apple indigo */
+  --accent: #30d158;         /* Apple green */
+  --neutral: #86868b;        /* Apple gray */
 
-  /* Gradient backgrounds */
-  --gradient-bg: radial-gradient(circle at 30% 20%, #fff6f0 0%, #fafbfc 40%, #ffffff 100%);
-  --orb-color: rgba(255, 97, 0, 0.3);
+  /* Gradient backgrounds - subtle depth */
+  --gradient-bg: radial-gradient(ellipse at top, #1a1a1c 0%, #0a0a0b 50%);
+  --gradient-overlay: radial-gradient(circle at 20% 80%, transparent 0%, rgba(94, 92, 230, 0.05) 50%, transparent 100%);
+  --orb-color: rgba(94, 92, 230, 0.15);
 
-  /* Shadows - Softer for light mode */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.08);
-  --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.06);
+  /* Shadows - subtle depth */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Dark mode colors */
@@ -100,7 +106,7 @@ html {
   overflow-x: hidden;
   overflow-y: scroll; /* Force scrollbar to always show */
   scrollbar-gutter: stable both-edges;
-  background-color: #1e1e1e;
+  background-color: var(--bg-primary);
 }
 
 [data-theme="dark"] html {
@@ -121,11 +127,27 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  background: #1e1e1e;
+  background: var(--bg-primary);
+  background-image: var(--gradient-bg), var(--gradient-overlay);
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
   margin-right: calc(100vw - 100%);
+  position: relative;
+}
+
+/* Subtle noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.025;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
 }
 
 /* Next.js specific wrapper div fixes */
@@ -156,7 +178,7 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #1e1e1e;
+  background: var(--gradient-bg);
   z-index: -10;
   pointer-events: none;
 }

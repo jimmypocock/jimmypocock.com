@@ -3,25 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  Github, 
-  Linkedin, 
-  BellRing,
-  Tent, 
-  Mic, 
-  Play, 
-  Bot,
-  Dumbbell, 
-  Music, 
-  Dog, 
-  Brain,
-  type LucideIcon
-} from 'lucide-react';
 import { projects } from '@/lib/projects';
 import ProjectCard from '@/components/ProjectCard';
 
 interface LinkItem {
-  icon: LucideIcon;
   prefix?: string;
   text: string;
   href: string;
@@ -33,22 +18,13 @@ interface LinkItem {
 export default function Home() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
-  const projectIcons: Record<string, LucideIcon> = {
-    'roverpass': Tent,
-    'vocal-technique': Mic,
-    'songsnips': Play,
-    'aws-delta': BellRing,
-    'greg': Bot,
-    'famefit': Dumbbell,
-  };
-
   const personalItems: LinkItem[] = [
-    { icon: Music, prefix: 'hear my', text: 'music', href: '/voice-memos' },
-    { icon: Dog, prefix: 'see my', text: 'dog', href: '/rae' },
-    { icon: Brain, prefix: 'read my', text: 'thoughts', href: '/thoughts' },
+    { prefix: 'hear my', text: 'music', href: '/voice-memos' },
+    { prefix: 'see my', text: 'dog', href: '/rae' },
+    // { prefix: 'read my', text: 'thoughts', href: '/thoughts' },
   ];
   return (
-    <div className="fixed inset-0 bg-black overflow-visible">
+    <div className="fixed inset-0 overflow-visible" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Image - scaled 300% width, 140% height */}
       <div className="fixed top-[65%] left-[22%] -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[140vh] pointer-events-none z-0">
         <Image
@@ -67,92 +43,113 @@ export default function Home() {
         <div className="hidden lg:block lg:w-1/2"></div>
         
         {/* Text content on the right */}
-        <div className="w-full lg:w-1/2 h-full overflow-y-auto flex px-4 sm:px-8">
-        <div className="py-8">
-          <h1 className="text-white text-3xl md:text-6xl mb-6 tracking-widest lowercase">
+        <div className="w-full lg:w-1/2 h-full overflow-y-auto flex px-4 sm:px-8 relative">
+        {/* Subtle gradient overlay for depth */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(circle at 80% 20%, rgba(94, 92, 230, 0.03) 0%, transparent 40%)'
+        }} />
+        <div className="py-8 relative z-10">
+          <h1 className="text-3xl md:text-6xl mb-6 tracking-widest lowercase" style={{ color: 'var(--text-primary)' }}>
             jimmy pocock
           </h1>
-          <p className="text-white text-base md:text-xl mb-2 tracking-wider flex items-center gap-3">
-            <Github className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
+          <div className="mb-8 space-y-3">
+            <p className="text-base md:text-lg tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+              engineer in austin, tx
+            </p>
+            <div className="flex gap-6">
               <a 
                 href="https://www.github.com/jimmypocock" 
-                title="github"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
+                title="GitHub"
+                className="text-base md:text-lg tracking-wider text-[var(--text-primary)] transition-all duration-300 hover:tracking-[0.15em]"
                 target="_blank"
+                rel="noopener noreferrer"
               >
-                engineer
+                github
               </a>
-              <span className="text-gray-300">{' '}in austin, tx</span>
-            </span>
-          </p>
-          <p className="text-gray-300 text-base md:text-xl mb-8 tracking-wider flex items-center gap-3">
-            <Linkedin className="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0" />
-            <span>
-              let&apos;s{' '}
               <a 
                 href="https://www.linkedin.com/in/jimmypocock" 
-                title="email"
-                className="text-white font-semibold tracking-widest hover:opacity-70 transition-opacity duration-300"
+                title="LinkedIn"
+                className="text-base md:text-lg tracking-wider text-[var(--text-primary)] transition-all duration-300 hover:tracking-[0.15em]"
                 target="_blank"
+                rel="noopener noreferrer"
               >
-                talk
+                linkedin
               </a>
-              {' '}about code
-            </span>
-          </p>
+              <a 
+                href="mailto:hello@jimmypocock.com" 
+                title="Email"
+                className="text-base md:text-lg tracking-wider text-[var(--text-primary)] transition-all duration-300 hover:tracking-[0.15em]"
+              >
+                email
+              </a>
+            </div>
+          </div>
           
           {/* Divider */}
-          <div className="w-16 h-px bg-gray-400 my-6" />
+          <div className="w-16 h-px my-6" style={{ backgroundColor: 'var(--border-color)' }} />
           
           {/* Portfolio Section */}
-          {projects.map((project) => {
-            const Icon = projectIcons[project.slug];
-            const prefix = project.status === 'built' ? 'i built' : 'currently building';
-            return (
-              <p key={project.slug} className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3 group">
-                <Icon 
-                  className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 transition-all duration-300 group-hover:scale-110" 
-                  style={{ color: project.color }}
-                />
-                <span>
-                  {prefix}{' '}
+          <div className="space-y-2">
+            {projects.map((project) => {
+              const prefix = project.status === 'built' ? 'i built' : 'currently building';
+              return (
+                <div key={project.slug} className="group relative">
                   <button
                     onClick={() => setSelectedProject(project.slug)}
-                    className="font-semibold tracking-widest transition-all duration-300 hover:tracking-[0.2em]"
-                    style={{ 
-                      color: project.status === 'built' ? '#ffffff' : project.color,
-                    }}
+                    className="w-full text-left py-1 -mx-2 px-2 rounded-lg transition-all duration-200 hover:bg-white/[0.02]"
                   >
-                    {project.title.toLowerCase()}
+                    <div className="flex items-baseline">
+                      <span className="text-base md:text-lg tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                        {prefix}{' '}
+                        <span 
+                          className="transition-all duration-200 group-hover:tracking-[0.15em]"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
+                          {project.title.toLowerCase()}
+                        </span>
+                      </span>
+                      <span 
+                        className="ml-auto text-xs uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        style={{ color: 'var(--text-accent)' }}
+                      >
+                        →
+                      </span>
+                    </div>
                   </button>
-                </span>
-              </p>
-            );
-          })}
+                </div>
+              );
+            })}
+          </div>
           
           {/* Divider */}
-          <div className="w-16 h-px bg-gray-400 my-6" />
+          <div className="w-16 h-px my-6" style={{ backgroundColor: 'var(--border-color)' }} />
           
           {/* Personal Section */}
-          {personalItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <p key={index} className="text-gray-300 text-sm md:text-lg mb-2 tracking-wider flex items-center gap-3">
-                <Icon className="w-4 h-4 text-white flex-shrink-0" />
-                <span>
-                  {item.prefix}{' '}
+          <div className="space-y-2">
+            {personalItems.map((item, index) => {
+              return (
+                <div key={index} className="group relative">
                   <Link 
-                    href={item.href} 
-                    className="text-white font-medium tracking-widest hover:opacity-70 transition-opacity duration-300"
+                    href={item.href}
+                    className="block py-1 -mx-2 px-2 rounded-lg transition-all duration-200 hover:bg-white/[0.02]"
+                    style={{ textDecoration: 'none' }}
                   >
-                    {item.text}
+                    <div className="flex items-baseline">
+                      <span className="text-base md:text-lg tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                        {item.prefix}{' '}
+                        <span 
+                          className="transition-all duration-200 group-hover:tracking-[0.15em]"
+                          style={{ color: 'var(--text-primary)' }}
+                        >
+                          {item.text}
+                        </span>
+                      </span>
+                    </div>
                   </Link>
-                  {item.suffix}
-                </span>
-              </p>
-            );
-          })}
+                </div>
+              );
+            })}
+          </div>
         </div>
         </div>
       </div>

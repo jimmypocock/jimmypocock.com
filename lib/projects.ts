@@ -16,6 +16,12 @@ export interface Project {
     value: string;
   }[];
   color: string; // Brand color for accents
+  theme?: {
+    background: string;
+    text: string;
+    textSecondary: string;
+    accent: string;
+  };
   images: {
     hero: string;
     gallery?: string[];
@@ -26,22 +32,28 @@ export const projects: Project[] = [
   {
     slug: 'roverpass',
     title: 'RoverPass',
-    tagline: 'Marketplace for RV parks and campgrounds',
+    tagline: 'The operating system for outdoor hospitality',
     href: 'https://www.roverpass.com',
     status: 'built',
-    year: '2016-2021',
-    role: 'Founding Engineer / CTO',
-    tech: ['Ruby on Rails', 'React', 'PostgreSQL', 'AWS', 'Elasticsearch'],
-    problem: 'RV travelers struggled to find and book campgrounds online. Most parks used pen-and-paper systems, and travelers had to call dozens of places to find availability.',
-    solution: 'Built a two-sided marketplace connecting millions of RVers with thousands of campgrounds. Developed the core booking engine, payment processing, and inventory management system.',
-    impact: 'Processed over $100M in bookings, helped 3000+ parks modernize their operations, and became one of the largest OTAs in the RV industry before acquisition.',
-    learned: 'How to scale a marketplace from zero to millions of users. The importance of building trust in two-sided markets. Managing technical debt while growing 10x year-over-year.',
+    year: '2013-2023',
+    role: 'Co-Founder & Chief Product Officer',
+    tech: ['Ruby on Rails', 'React', 'PostgreSQL', 'Stripe Connect', 'iOS', 'AWS', 'Elasticsearch'],
+    problem: 'The $7B outdoor hospitality industry was stuck in the 1990s. Campground owners managed reservations on paper, RVers called dozens of parks to find availability, and the entire industry lacked the digital infrastructure that hotels had enjoyed for decades.',
+    solution: 'Architected a complete SaaS platform from scratch - starting with consumer-facing search and booking, then building the industry\'s first comprehensive campground management system. Engineered enterprise payment infrastructure processing millions monthly through Stripe Connect, created dynamic pricing algorithms increasing revenue 10%, and pioneered long-term stay management for the RV industry.',
+    impact: 'Scaled from zero to $5.2M annual revenue over 10 years. Platform processed $35M+ in GMV annually with 99.9% uptime, serving 2.5M active users. Achieved 4 consecutive SourceForge Top Performer awards. Successfully raised $8.4M across multiple rounds before strategic acquisition, transforming how thousands of campgrounds operate.',
+    learned: 'Building in a traditional industry taught me that great technology only wins when paired with deep customer understanding. Learned to balance technical perfection with shipping velocity, architect systems that scale economically (not just technically), and that sometimes the best microservice architecture is a well-organized monolith. Most importantly: the gap between what users say they want and what actually drives their success.',
     metrics: [
-      { label: 'Bookings Processed', value: '$100M+' },
-      { label: 'Parks Onboarded', value: '3,000+' },
-      { label: 'Team Grown', value: '3 → 25 engineers' },
+      { label: 'Annual GMV', value: '$35M+' },
+      { label: 'Active Users', value: '2.5M' },
+      { label: 'Uptime', value: '99.9%' },
     ],
-    color: '#22c55e', // Green for outdoor/camping
+    color: '#ff5252', // RoverPass brand red
+    theme: {
+      background: '#EEF1F5',
+      text: '#1F4965',
+      textSecondary: '#4A6B89',
+      accent: '#ff5252'
+    },
     images: {
       hero: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=1200&h=600&fit=crop', // RV camping scene
       gallery: [
@@ -54,22 +66,28 @@ export const projects: Project[] = [
   {
     slug: 'vocal-technique',
     title: 'Vocal Technique Translator',
-    tagline: 'Bridging classical and contemporary singing pedagogy',
+    tagline: 'Transforming lyrics into phonetic notation for singers',
     href: 'https://www.vocaltechniquetranslator.com',
     status: 'built',
-    year: '2023',
-    role: 'Solo Developer',
-    tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'OpenAI API'],
-    problem: 'Voice teachers from different backgrounds (classical, contemporary, speech therapy) use conflicting terminology for the same concepts, creating confusion for students.',
-    solution: 'Created an AI-powered translation tool that maps concepts across different vocal pedagogies. Teachers can input terms from their methodology and see equivalent concepts in other approaches.',
-    impact: 'Used by 500+ voice teachers worldwide. Featured in the Journal of Singing. Bridging gaps between traditionally siloed teaching communities.',
-    learned: 'The power of domain-specific AI applications. How to make complex technical concepts accessible to non-technical users. The importance of working closely with subject matter experts.',
+    year: '2024',
+    role: 'Solo Creator',
+    tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Local Processing'],
+    problem: 'Vocal teachers were spending countless hours manually converting lyrics into phonetic syllables for their students. Singers struggled with tension from complex consonant clusters and inconsistent vowel production across registers, leading to vocal strain and poor technique.',
+    solution: 'Built an instant phonetic transformation tool that processes entire songs in under 50ms. Engineered 31 vowel transformations and 44 consonant rules that mimic how professional singers naturally adjust pronunciation. Created three intensity levels - from beginner-friendly hyphenation to advanced vocal transformations - all running locally in the browser for privacy.',
+    impact: 'What once took voice teachers hours now happens in seconds. Achieved 4.8/5 rating from 150+ users. Democratized access to professional vocal technique by making it completely free until 2030. The tool bridges the gap between technical innovation and musical education, helping singers develop proper muscle memory without complex IPA notation.',
+    learned: 'Combining a decade of software engineering with recent deep dive into vocal pedagogy taught me that the best tools emerge from personal frustration. Learned that context-aware algorithms can preserve musical flow while transforming phonetics. Most importantly: sometimes the simplest solution (browser-based, no login, instant results) creates the most value.',
     metrics: [
-      { label: 'Active Teachers', value: '500+' },
-      { label: 'Terms Mapped', value: '1,200+' },
-      { label: 'Methodologies', value: '8 systems' },
+      { label: 'User Rating', value: '4.8/5 ⭐' },
+      { label: 'Processing Speed', value: '<50ms' },
+      { label: 'Phonetic Rules', value: '75 total' },
     ],
     color: '#8b5cf6', // Purple for education/creativity
+    theme: {
+      background: '#faf5ff', // Light purple-tinted white
+      text: '#581c87', // Deep purple text
+      textSecondary: '#6b21a8', // Medium purple secondary
+      accent: '#9333ea' // Bright purple accent
+    },
     images: {
       hero: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200&h=600&fit=crop', // Singer/microphone
       gallery: [
