@@ -1,21 +1,24 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
   Github, 
   Linkedin, 
-  // BellRing,
-  // Tent, 
-  // Mic, 
-  // Play, 
-  // Bot,
-  // Dumbbell, 
+  BellRing,
+  Tent, 
+  Mic, 
+  Play, 
+  Bot,
+  Dumbbell, 
   Music, 
   Dog, 
   Brain,
   type LucideIcon
 } from 'lucide-react';
+import { projects } from '@/lib/projects';
+import ProjectCard from '@/components/ProjectCard';
 
 interface LinkItem {
   icon: LucideIcon;
@@ -28,14 +31,16 @@ interface LinkItem {
 }
 
 export default function Home() {
-  // const portfolioItems: LinkItem[] = [
-  //   { icon: Tent, prefix: 'i built', text: 'roverpass', href: 'https://www.roverpass.com', title: 'roverpass.com', external: true },
-  //   { icon: Mic, prefix: 'i built', text: 'vocal technique translator', href: 'https://www.vocaltechniquetranslator.com', title: 'vocaltechniquetranslator.com', external: true },
-  //   { icon: Play, prefix: 'i built', text: 'songsnips', href: 'https://www.songsnips.com', title: 'songsnips.com', external: true },
-  //   { icon: BellRing, prefix: 'i built', text: 'aws delta cost usage notification', href: 'https://github.com/jimmypocock/AWSDeltaCostUsage', title: 'AWSDeltaCostUsage', external: true },
-  //   { icon: Bot, prefix: 'currently building', text: 'greg', href: 'https://github.com/jimmypocock/Greg', title: 'greg', external: true },
-  //   { icon: Dumbbell, prefix: 'currently building', text: 'famefit', href: 'https://www.famefitapp.com', title: 'famefitapp.com', external: true },
-  // ];
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  const projectIcons: Record<string, LucideIcon> = {
+    'roverpass': Tent,
+    'vocal-technique': Mic,
+    'songsnips': Play,
+    'aws-delta': BellRing,
+    'greg': Bot,
+    'famefit': Dumbbell,
+  };
 
   const personalItems: LinkItem[] = [
     { icon: Music, prefix: 'hear my', text: 'music', href: '/voice-memos' },
@@ -100,6 +105,35 @@ export default function Home() {
           {/* Divider */}
           <div className="w-16 h-px bg-gray-400 my-6" />
           
+          {/* Portfolio Section */}
+          {projects.map((project) => {
+            const Icon = projectIcons[project.slug];
+            const prefix = project.status === 'built' ? 'i built' : 'currently building';
+            return (
+              <p key={project.slug} className="text-gray-300 text-base md:text-xl mb-2 tracking-wider flex items-center gap-3 group">
+                <Icon 
+                  className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0 transition-all duration-300 group-hover:scale-110" 
+                  style={{ color: project.color }}
+                />
+                <span>
+                  {prefix}{' '}
+                  <button
+                    onClick={() => setSelectedProject(project.slug)}
+                    className="font-semibold tracking-widest transition-all duration-300 hover:tracking-[0.2em]"
+                    style={{ 
+                      color: project.status === 'built' ? '#ffffff' : project.color,
+                    }}
+                  >
+                    {project.title.toLowerCase()}
+                  </button>
+                </span>
+              </p>
+            );
+          })}
+          
+          {/* Divider */}
+          <div className="w-16 h-px bg-gray-400 my-6" />
+          
           {/* Personal Section */}
           {personalItems.map((item, index) => {
             const Icon = item.icon;
@@ -122,6 +156,16 @@ export default function Home() {
         </div>
         </div>
       </div>
+      
+      {/* Project Cards */}
+      {projects.map((project) => (
+        <ProjectCard
+          key={project.slug}
+          project={project}
+          isOpen={selectedProject === project.slug}
+          onClose={() => setSelectedProject(null)}
+        />
+      ))}
     </div>
   );
 }
