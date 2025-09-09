@@ -86,7 +86,7 @@ Achievements:
 
 ### Director of Internet Sales
 
-**Ron Craft Chevrolet Cadillac** · Full-time
+**Ron Carter Toyota** · Full-time
 May 2012 - May 2013 · 1 yr
 Houston, Texas area
 

@@ -4,7 +4,7 @@
 
 **Entrepreneurial Technology Leader | SaaS Platform Architect | 10+ Years Building Multi-Million Dollar Business**
 
-Visionary co-founder and Chief Architect who transformed the outdoor hospitality industry by building RoverPass from concept to a $5.2M revenue SaaS platform serving thousands of campgrounds across North America. Unique blend of deep technical expertise (Ruby on Rails, iOS, cloud architecture) and business acumen from marketing background. Proven ability to architect scalable solutions, lead product development, and drive innovation in traditionally underserved markets. Successfully scaled technology and team through multiple funding rounds ($8.4M+ raised) while maintaining platform stability and customer satisfaction (4.3+ star rating).
+Visionary co-founder and Chief Architect who transformed the outdoor hospitality industry by building RoverPass from concept to a $1.4M revenue SaaS platform serving thousands of campgrounds across North America. Unique blend of deep technical expertise (Ruby on Rails, iOS, cloud architecture) and business acumen from marketing background. Proven ability to architect scalable solutions, lead product development, and drive innovation in traditionally underserved markets. Successfully scaled technology and team through multiple funding rounds ($8.4M+ raised) while maintaining platform stability and customer satisfaction (4.3+ star rating).
 
 ## 2. Key Skills
 
@@ -31,7 +31,7 @@ Visionary co-founder and Chief Architect who transformed the outdoor hospitality
 **Key Achievements:**
 • Architected and built complete SaaS platform processing millions in transactions annually
 • Scaled platform from 0 to thousands of campground clients across North America
-• Led technical strategy through company growth from startup to $5.2M annual revenue
+• Led technical strategy through company growth from startup to $1.4M annual revenue
 • Designed real-time booking system handling complex inventory management
 • Built native iOS application expanding platform reach to mobile users
 • Integrated 10+ third-party services including payment processors, QuickBooks, AAA Trip Canvas

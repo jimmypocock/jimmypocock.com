@@ -49,11 +49,11 @@ export default function Home() {
         <div className="relative z-10 w-full min-h-screen flex flex-col lg:flex-row">
           <div className="hidden lg:block lg:w-1/2"></div>
           
-          <div className="w-full lg:w-1/2 min-h-screen flex px-4 sm:px-8 relative">
+          <div className="w-full lg:w-1/2 min-h-screen flex items-end px-4 sm:px-8 relative">
             <div className="absolute inset-0 pointer-events-none" style={{
               background: 'radial-gradient(circle at 80% 20%, rgba(94, 92, 230, 0.03) 0%, transparent 40%)'
             }} />
-            <div className="py-8 relative z-10">
+            <div className="pb-16 pt-8 relative z-10">
               <h1 className="text-3xl md:text-6xl mb-6 tracking-widest lowercase" style={{ color: 'var(--text-primary)' }}>
                 jimmy pocock
               </h1>

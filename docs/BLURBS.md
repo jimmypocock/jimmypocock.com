@@ -4,7 +4,7 @@ These are not official quotes from people about me. Just ways of communicating c
 
 ## 1. Key Achievements and Strengths
 
-- Co-founded and scaled RoverPass from 0 to $5.2M annual revenue over 10 years
+- Co-founded and scaled RoverPass from 0 to $1.4M annual revenue over 10 years
 - Successfully raised $8.4M+ in funding across multiple rounds
 - Built and architected complete SaaS platform processing millions in transactions
 - Scaled technical team from founding members to 35+ employees

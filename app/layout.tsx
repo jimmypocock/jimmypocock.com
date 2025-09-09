@@ -145,7 +145,7 @@ export default function RootLayout({
                 "alumniOf": {
                   "@type": "Organization",
                   "name": "RoverPass",
-                  "description": "Scaled to $5.2M revenue"
+                  "description": "Scaled to $1M+ revenue"
                 },
                 "knowsAbout": [
                   "Software Engineering",

@@ -50,7 +50,7 @@ While not quotes, these metrics demonstrate the real-world impact of his work:
 
 - **Indian Hills RV Resort**: 3x increase in repeat guests, 150% increase in direct bookings
 - **RV Park At The Bridge owner**: "RoverPass has reduced my stress and workload a lot"
-- **Platform scale**: $5.2 million annual revenue, serving thousands of campgrounds across US, Canada, and Australia
+- **Platform scale**: $1.4 million annual revenue, serving thousands of campgrounds across US, Canada, and Australia
 
 ## Employee sentiment (Glassdoor)
 

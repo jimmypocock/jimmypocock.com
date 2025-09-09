@@ -1,14 +1,14 @@
 # Maximizing Professional Potential Online: A Comprehensive Guide for Tech Entrepreneurs and SaaS Founders
 
-For a tech entrepreneur with 10+ years as co-founder and chief architect who has built a platform to $5.2M revenue, raised $8.4M+ in funding, and scaled a team to 35+ employees, creating a compelling online presence requires strategic positioning across multiple platforms. This comprehensive guide provides actionable recommendations based on 2025 best practices for maximizing employability and professional opportunities.
+For a tech entrepreneur with 10+ years as co-founder and chief architect who has built a platform to $1.4M revenue, raised $8.4M+ in funding, and scaled a team to 35+ employees, creating a compelling online presence requires strategic positioning across multiple platforms. This comprehensive guide provides actionable recommendations based on 2025 best practices for maximizing employability and professional opportunities.
 
 ## LinkedIn optimization strategies for tech executives in 2025
 
 LinkedIn remains the most critical platform for B2B tech leaders seeking new opportunities. The platform's 2025 algorithm heavily favors established experts who demonstrate consistent engagement and thought leadership.
 
-**Profile headline optimization** should follow a proven formula that maximizes all 220 characters. Strong examples for your background include: "Scaling SaaS Platforms to $10M+ ARR | Co-Founder with $8.4M+ Raised | Ruby on Rails/iOS Expert" or "Chief Architect Turned Founder | Built Platform to $5.2M Revenue | 35+ Team Scale Expert." The key is leading with quantifiable achievements while incorporating target role keywords.
+**Profile headline optimization** should follow a proven formula that maximizes all 220 characters. Strong examples for your background include: "Scaling SaaS Platforms to $10M+ ARR | Co-Founder with $8.4M+ Raised | Ruby on Rails/iOS Expert" or "Chief Architect Turned Founder | Built Platform to $1.4M Revenue | 35+ Team Scale Expert." The key is leading with quantifiable achievements while incorporating target role keywords.
 
-**About section best practices** require a compelling narrative structure. Start with a hook that captures your journey: "After building a platform from concept to $5.2M in revenue and scaling a team to 35+ employees, I've learned that technical excellence means nothing without business impact." Follow with specific achievements using bullet points that blend technical and business outcomes. Include your leadership philosophy and end with a clear call-to-action with direct contact information.
+**About section best practices** require a compelling narrative structure. Start with a hook that captures your journey: "After building a platform from concept to $1.4M in revenue and scaling a team to 35+ employees, I've learned that technical excellence means nothing without business impact." Follow with specific achievements using bullet points that blend technical and business outcomes. Include your leadership philosophy and end with a clear call-to-action with direct contact information.
 
 The **experience section** should use the STAR method (Situation, Task, Action, Result) to present achievements. For your co-founder/chief architect role, organize content into technical leadership, business impact, and strategic initiatives. Quantify everything possible - from team growth metrics to deployment speed improvements. Use all 100 characters in job titles for SEO optimization.
 
@@ -30,7 +30,7 @@ The key to presenting technical achievements lies in dual-track messaging that r
 
 **For technical audiences**, emphasize architecture decisions that enabled scale, performance metrics, technical challenges overcome, and innovative solutions implemented. Include GitHub repository links, code samples where appropriate, and detailed technical stack information.
 
-**For business audiences**, focus on revenue impact ("Built platform that generated $5.2M revenue"), efficiency gains, customer acquisition and retention metrics, and cost savings achieved through technical decisions. Use the before-and-after comparison method to illustrate transformation.
+**For business audiences**, focus on revenue impact ("Built platform that generated $1.4M revenue"), efficiency gains, customer acquisition and retention metrics, and cost savings achieved through technical decisions. Use the before-and-after comparison method to illustrate transformation.
 
 **Case study structure** should follow a proven format: Executive summary capturing project scope and impact, challenge definition with business context, solution architecture with visual diagrams, implementation phases with timeline, quantified results showing both technical and business outcomes, and lessons learned that demonstrate thought leadership.
 
@@ -42,13 +42,13 @@ A personal website serves as your digital headquarters, showcasing achievements 
 
 **Technical implementation** using Rails 7+ with Hotwire provides dynamic interactions while maintaining performance. Implement Tailwind CSS for consistent design, PostgreSQL for data management, and CloudFlare for global performance. Focus on Core Web Vitals optimization with LCP under 2.5 seconds and implement structured data markup for rich search snippets.
 
-**Portfolio presentation** should highlight your $5.2M revenue platform as a flagship case study. Structure each project with executive summary, challenge definition, solution architecture, technology stack details, implementation timeline, and quantified results. Include visual elements like architecture diagrams, performance dashboards, and growth charts.
+**Portfolio presentation** should highlight your $1.4M revenue platform as a flagship case study. Structure each project with executive summary, challenge definition, solution architecture, technology stack details, implementation timeline, and quantified results. Include visual elements like architecture diagrams, performance dashboards, and growth charts.
 
 ## Post-founder transition positioning strategies
 
 Transitioning from a 10+ year founder role requires careful narrative crafting to avoid common pitfalls while leveraging significant achievements. The key is reframing your identity from "former founder" to "experienced executive/operator" who brings proven scaling expertise.
 
-**Strategic messaging** should shift focus from company ownership to functional expertise. Instead of "I founded and ran RoverPass," position as "I built and scaled RoverPass to $5.2M ARR, developing expertise in SaaS operations and technical leadership." This subtle shift opens doors to executive roles beyond founder positions.
+**Strategic messaging** should shift focus from company ownership to functional expertise. Instead of "I founded and ran RoverPass," position as "I built and scaled RoverPass to $1.4M ARR, developing expertise in SaaS operations and technical leadership." This subtle shift opens doors to executive roles beyond founder positions.
 
 **Common mistakes to avoid** include over-attachment to founder identity, making every conversation about your previous startup, unclear messaging about transition reasons, and passive networking approaches. Combat these by developing a clear growth narrative, abstracting achievements to show broader applicability, and proactively building new relationships in target industries.
 
@@ -56,9 +56,9 @@ Transitioning from a 10+ year founder role requires careful narrative crafting t
 
 ## Demonstrating SaaS experience and revenue achievements
 
-Your $5.2M revenue achievement and $8.4M+ fundraising success are powerful credibility indicators that should be woven throughout your online presence with appropriate context and humility.
+Your $1.4M revenue achievement and $8.4M+ fundraising success are powerful credibility indicators that should be woven throughout your online presence with appropriate context and humility.
 
-**Revenue presentation** should follow a structured format: "Scaled ARR from $500K to $5.2M over 3 years (920% growth)" provides clear trajectory. Add context about market conditions, strategic decisions that drove growth, and what this enabled for the business. Always connect financial metrics to broader business impact.
+**Revenue presentation** should follow a structured format: "Scaled ARR from $500K to $1.4M over 3 years (920% growth)" provides clear trajectory. Add context about market conditions, strategic decisions that drove growth, and what this enabled for the business. Always connect financial metrics to broader business impact.
 
 **Team scaling narrative** demonstrates leadership capability beyond technical skills. Frame as "Scaled engineering team from 2 to 35+ developers while maintaining 90% retention" or "Built high-performing teams across engineering, sales, and customer success." Include specific examples of key hires, culture initiatives, and organizational design decisions.
 
@@ -100,7 +100,7 @@ Success requires systematic implementation across multiple phases, with clear pr
 
 **Immediate actions (Week 1-2)** focus on foundation building. Update your LinkedIn headline and about section with quantified achievements. Optimize experience descriptions using the STAR method. Conduct professional photography sessions for profile photos. Create a basic GitHub README showcasing technical leadership. Request initial recommendations from co-founders and key stakeholders.
 
-**Short-term optimization (Month 1-3)** expands your digital footprint. Launch your personal website with Rails, showcasing major achievements. Begin consistent content publishing on LinkedIn and Medium. Conduct 20+ strategic networking conversations. Build featured content collections across platforms. Develop comprehensive case studies for your $5.2M revenue platform.
+**Short-term optimization (Month 1-3)** expands your digital footprint. Launch your personal website with Rails, showcasing major achievements. Begin consistent content publishing on LinkedIn and Medium. Conduct 20+ strategic networking conversations. Build featured content collections across platforms. Develop comprehensive case studies for your $1.4M revenue platform.
 
 **Long-term strategy (Ongoing)** maintains momentum through continuous improvement. Publish thought leadership content weekly on primary platforms. Track engagement metrics and optimize based on performance. Expand network strategically with target industry connections. Update achievements and recognition quarterly. Build email list through valuable content offerings.
 
