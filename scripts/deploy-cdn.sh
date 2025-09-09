@@ -38,13 +38,7 @@ npm run build
 
 # Deploy CDN stack
 echo "☁️  Deploying CDN distribution..."
-# Pass the certificate ARN from environment variable if it exists
-if [ -n "$CERTIFICATE_ARN" ]; then
-    echo "Using certificate: $CERTIFICATE_ARN"
-    npx cdk deploy "$CDN_STACK" --require-approval never -c certificateArn="$CERTIFICATE_ARN" "$@"
-else
-    npx cdk deploy "$CDN_STACK" --require-approval never "$@"
-fi
+npx cdk deploy "$CDN_STACK" --require-approval never --context createCertificate=true "$@"
 
 cd ..
 

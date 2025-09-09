@@ -113,8 +113,8 @@ async function validateContext(): Promise<ValidationResult> {
     const warnings: string[] = [];
     
     // Check for required context values
-    if (!context.certificateArn && context.createCertificate !== 'true') {
-      warnings.push('Neither certificateArn nor createCertificate=true is set. Certificate stack may fail.');
+    if (context.createCertificate !== 'true') {
+      warnings.push('createCertificate is not set to true. Certificate stack will not create a certificate.');
     }
     
     if (!context.notificationEmail) {
@@ -140,14 +140,18 @@ async function validateContext(): Promise<ValidationResult> {
 async function main() {
   console.log('🔍 Validating CDK Stacks...\n');
   
+  // Load configuration to get dynamic stack names
+  const appName = process.env.APP_NAME || 'nextjs-app';
+  const stackPrefix = process.env.STACK_PREFIX || appName.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  
   const stacks = [
-    'VTT-Foundation',
-    'VTT-Certificate',
-    'VTT-EdgeFunctions',
-    'VTT-WAF',
-    'VTT-CDN',
-    'VTT-Monitoring',
-    'VTT-App'
+    `${stackPrefix}-Foundation`,
+    `${stackPrefix}-Certificate`,
+    `${stackPrefix}-EdgeFunctions`,
+    `${stackPrefix}-WAF`,
+    `${stackPrefix}-CDN`,
+    `${stackPrefix}-Monitoring`,
+    `${stackPrefix}-App`
   ];
   
   const results: ValidationResult[] = [];

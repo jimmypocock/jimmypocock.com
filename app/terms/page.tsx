@@ -16,9 +16,6 @@ export default function Terms() {
             <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="/how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-              How it Works
-            </Link>
           </div>
         </nav>
       </header>

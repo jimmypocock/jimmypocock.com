@@ -1,6 +1,6 @@
 # Next.js AWS Template
 
-A production-ready Next.js template with comprehensive AWS infrastructure, Google Analytics, Google AdSense, and modern web development tools.
+A production-ready Next.js template with comprehensive AWS infrastructure, Google Analytics, and modern web development tools.
 
 ## Features
 
@@ -14,7 +14,6 @@ A production-ready Next.js template with comprehensive AWS infrastructure, Googl
 ### 🔧 Google Integrations
 
 - **Google Analytics** with consent management
-- **Google AdSense** with privacy-compliant setup
 - **Cookie Consent Management Platform (CMP)**
 
 ### ☁️ AWS Infrastructure
@@ -55,8 +54,9 @@ A production-ready Next.js template with comprehensive AWS infrastructure, Googl
 </div>
 
 > **💡 Making this a GitHub Template Repository**
-> 
+>
 > If you're the repository owner and want to make this a template for others to use:
+>
 > 1. Go to your repository **Settings**
 > 2. Scroll down to the **"Template repository"** section
 > 3. Check the box **"Template repository"**
@@ -122,9 +122,6 @@ Edit `.env` with your values:
 # Google Analytics
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
-# Google AdSense
-NEXT_PUBLIC_ADSENSE_CLIENT_ID=ca-pub-XXXXXXXXXXXXXXXXX
-
 # AWS Configuration
 AWS_REGION=us-east-1
 AWS_ACCOUNT_ID=123456789012
@@ -186,7 +183,6 @@ export const metadata: Metadata = {
 **4. Update Public Files**
 
 - `public/robots.txt`: Update sitemap URL to your domain
-- `public/ads.txt`: Add your Google AdSense publisher ID
 
 ### 5. Start Development
 
@@ -232,6 +228,7 @@ theme: {
 #### App Metadata
 
 Update `app/layout.tsx`:
+
 - Title and description
 - Open Graph metadata
 - Schema markup
@@ -241,13 +238,13 @@ Update `app/layout.tsx`:
 
 - `app/page.tsx` - Home page
 - `app/about/page.tsx` - About page
-- `app/how-it-works/page.tsx` - Documentation
 - `app/privacy/page.tsx` - Privacy policy
 - `app/terms/page.tsx` - Terms of service
 
 #### Package Information
 
 Update `package.json`:
+
 ```json
 {
   "name": "your-app-name",
@@ -262,13 +259,6 @@ Update `package.json`:
 1. Create a GA4 property at [analytics.google.com](https://analytics.google.com)
 2. Copy your Measurement ID (G-XXXXXXXXXX)
 3. Update `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env`
-
-#### Google AdSense
-
-1. Apply for AdSense at [adsense.google.com](https://adsense.google.com)
-2. Get your Publisher ID (ca-pub-XXXXXXXXXXXXXXXXX)
-3. Update `NEXT_PUBLIC_ADSENSE_CLIENT_ID` in `.env`
-4. Update `public/ads.txt` with your Publisher ID
 
 ## AWS Deployment
 
@@ -334,6 +324,82 @@ npm run maintenance:on
 npm run maintenance:off
 ```
 
+## Image Management
+
+### Managing Large Image Collections (Rae's Photos)
+
+The site includes a photo mosaic with 198 images (100MB+) that are managed separately from code deployment to avoid CDK Lambda timeout issues.
+
+#### Key Concepts
+- **Images stored in S3**: Large images live in S3 as the source of truth
+- **Gitignored locally**: `.webp` files in `public/images/rae/` are not tracked in git
+- **Separate upload**: Images upload directly to S3, bypassing CDK
+- **Automated naming**: New images are automatically renamed to `rae-N.webp` pattern
+
+#### Image Commands
+
+```bash
+# Interactive menu for all image operations
+npm run images
+
+# Quick commands
+npm run images:add     # Add and rename new images (rae-199.webp, etc.)
+npm run images:upload  # Upload images to S3
+npm run images:sync    # Upload and invalidate CloudFront cache
+
+# Direct script usage
+./scripts/manage-rae-images.sh list      # List images in S3
+./scripts/manage-rae-images.sh download  # Download from S3 to local
+./scripts/manage-rae-images.sh full      # Add, upload, and invalidate
+```
+
+#### Adding New Images
+
+```bash
+# Method 1: Interactive
+npm run images
+# Select option 6 for "Full sync (add, upload, invalidate)"
+
+# Method 2: Step by step
+cp new-photo.webp public/images/rae/   # Add new image
+npm run images:add                      # Renames to rae-199.webp
+npm run images:sync                     # Upload and clear cache
+```
+
+#### Deployment with Images
+
+```bash
+# Deploy code only (recommended for most updates)
+npm run deploy:app
+
+# Deploy code and sync images
+npm run deploy:full
+
+# Upload images only (if deployment times out)
+./scripts/deploy-clean.sh --images-only
+```
+
+#### Troubleshooting Images
+
+**Missing images locally:**
+```bash
+./scripts/manage-rae-images.sh download
+```
+
+**Deployment timeout with images:**
+- Images are too large for CDK Lambda (15-min timeout)
+- Use `npm run deploy:app` for code only
+- Use `npm run images:sync` to upload images separately
+
+**Images not updating on site:**
+```bash
+# Force CloudFront cache clear
+aws cloudfront create-invalidation \
+  --distribution-id E1P43FQCTLJGL1 \
+  --paths "/images/rae/*" \
+  --profile jimmycpocock
+```
+
 ## Development Scripts
 
 | Command | Description |
@@ -353,11 +419,9 @@ npm run maintenance:off
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page
 │   ├── about/             # About page
-│   ├── how-it-works/      # Documentation
 │   ├── privacy/           # Privacy policy
 │   └── terms/             # Terms of service
 ├── components/            # Reusable React components
-│   ├── AdSense/           # Google AdSense components
 │   ├── GoogleAnalytics.tsx
 │   ├── GoogleCMP.tsx      # Cookie consent
 │   └── ThemeToggle.tsx
@@ -369,27 +433,60 @@ npm run maintenance:off
 └── .env.example           # Environment variables template
 ```
 
+## Route Tree
+
+```
+/                          # Home page (minimal design with thinker.png background)
+├── /about                 # About Jimmy Pocock - personal story and achievements
+├── /thoughts              # Articles and insights listing page
+│   └── /thoughts/[slug]   # Individual article pages (29 markdown articles)
+├── /leadership            # Leadership & Impact (placeholder)
+├── /projects              # Technical Projects showcase
+├── /music                 # Music & Creativity portfolio (placeholder)
+├── /connect               # Contact and connection information
+├── /privacy               # Privacy policy
+└── /terms                 # Terms of service
+```
+
+### Content Overview
+
+- **Home (`/`)**: Minimal landing page with name, role, and key links
+- **About (`/about`)**: Personalized page about Jimmy's journey, values, and interests
+- **Thoughts (`/thoughts`)**: Collection of 29 articles on various topics including:
+  - Technology and philosophy
+  - Political commentary
+  - Social observations
+  - Personal reflections
+- **Leadership (`/leadership`)**: Placeholder for RoverPass case study and leadership content
+- **Projects (`/projects`)**: Showcases RoverPass, Vocal Technique Translator, and SongSnips
+- **Music (`/music`)**: Placeholder for music portfolio and studio information
+- **Connect (`/connect`)**: Professional contact information and availability
+
 ## Best Practices
 
 ### 🔒 Security
+
 - All secrets in environment variables
 - WAF protection enabled
 - HTTPS enforced
 - Content Security Policy headers
 
 ### 📊 Performance
+
 - Next.js optimizations enabled
 - CDN caching configured
 - Image optimization
 - Bundle analysis available
 
 ### ♿ Accessibility
+
 - Semantic HTML structure
 - ARIA labels where needed
 - Keyboard navigation support
 - Color contrast compliance
 
 ### 🔍 SEO
+
 - Meta tags optimized
 - Structured data markup
 - Sitemap included
@@ -400,6 +497,7 @@ npm run maintenance:off
 ### CloudWatch Dashboards
 
 Access monitoring dashboards in AWS Console:
+
 - Application performance metrics
 - Error tracking and alerts
 - Infrastructure health monitoring
@@ -415,6 +513,7 @@ npm run maintenance:off
 ```
 
 ### Log Monitoring
+
 - CloudFront access logs
 - Lambda@Edge function logs
 - Application error tracking
@@ -448,6 +547,7 @@ npm run status:all
 ```
 
 **Environment Variables**
+
 - Ensure all required variables are set in `.env`
 - Check AWS credentials and permissions
 - Verify domain ownership for certificates

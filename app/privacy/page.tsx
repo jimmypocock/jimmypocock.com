@@ -16,9 +16,6 @@ export default function Privacy() {
             <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="/how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
-              How it Works
-            </Link>
           </div>
         </nav>
       </header>
@@ -66,7 +63,6 @@ export default function Privacy() {
             </p>
             <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-6 space-y-2">
               <li><strong>Google Analytics:</strong> For website analytics and performance monitoring</li>
-              <li><strong>Google AdSense:</strong> For displaying relevant advertisements</li>
               <li><strong>AWS:</strong> For hosting and infrastructure services</li>
             </ul>
 
@@ -77,7 +73,6 @@ export default function Privacy() {
             <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 mb-6 space-y-2">
               <li>Remember your preferences and settings</li>
               <li>Understand how you use our application</li>
-              <li>Show relevant advertisements</li>
               <li>Improve our services</li>
             </ul>
             <p className="text-gray-600 dark:text-gray-300 mb-6">

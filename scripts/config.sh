@@ -28,6 +28,9 @@ export LEGACY_STACK="VocalTechniqueTranslatorStack"
 export LEGACY_WAF_STACK="VocalTechniqueTranslatorWafStack"
 export LEGACY_MONITORING_STACK="VocalTechniqueTranslatorMonitoringStack"
 
+# AWS Profile (if set)
+export AWS_PROFILE=${AWS_PROFILE:-"jimmycpocock"}
+
 # Display configuration
 if [ "${1:-}" = "--show-config" ]; then
     echo "🔧 Current configuration:"

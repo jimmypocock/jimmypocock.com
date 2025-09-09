@@ -1,8 +1,0 @@
----
-title: "Art in Technology"
-date: "2025-06-02"
----
-
-We should build the world's first true art piece from technology. An artistic piece not built in the name of capitalism or even in the interest of open source and community. But a piece of art that can truly affect a human being's "soul." Affect the senses as a song or work of can. With an AI that could seemingly control the synapses of your brain that fire as you interpret the art's meaning and try to relate to your own experiences. I wonder what that would look like Would it be a piece of art that can change based on an understanding of the person looking at it? Could we build something like that without the piece of art actually changing, but changing how each and every person looking at it receives it? Do we know enough about the human mind to manipulate it? We think because of movies that the day machines rule us will be the day they control our weapons, but it won't. It will be the day they control our minds.
-
-If we are to believe that everything happens for a reason, then we must also believe our future interpretations of art as it relates to our past experiences are preconceived. Any one or thing that controls our physical existence must also control our consciousness. Therefore, nothing we do has reason as reason is applied to human beings. Things happening for no reason is the only way things happen for a human's concept of reason.

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Voice Memos EP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle background pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 56px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #000000 0%, #434343 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 21px;
+      color: #6e6e73;
+      font-weight: 400;
+      letter-spacing: 0.011em;
+      line-height: 1.381;
+    }
+
+    /* iPhone Container */
+    .iphone-container {
+      position: relative;
+      animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* iPhone Device - Landscape */
+    .iphone {
+      width: 844px;
+      height: 390px;
+      background: #1c1c1e;
+      border-radius: 44px;
+      padding: 14px;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 40px 120px rgba(0, 0, 0, 0.1);
+      transform: perspective(1000px) rotateX(2deg);
+      transition: transform 0.5s ease;
+    }
+
+    .iphone:hover {
+      transform: perspective(1000px) rotateX(0deg) scale(1.02);
+    }
+
+    /* Screen */
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Status bar - horizontal */
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 35px;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+
+    .status-time {
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .status-icon {
+      width: auto;
+      height: 12px;
+      color: white;
+      font-size: 12px;
+    }
+
+    /* Dynamic Island (notch) - landscape */
+    .dynamic-island {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 32px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 11;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Voice Memos App Interface */
+    .app-interface {
+      width: 100%;
+      height: 100%;
+      padding: 45px 35px 20px;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+    }
+
+    .app-header {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .app-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .recording-label {
+      font-size: 13px;
+      color: #8e8e93;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .recording-dot {
+      width: 6px;
+      height: 6px;
+      background: #ff3b30;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    /*
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+      }
+    }*/
+
+    /* Soundcloud Embed Container */
+    .player-container {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .player-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Info section */
+    .info-section {
+      max-width: 600px;
+      margin-top: 60px;
+      text-align: center;
+      animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .info-text {
+      font-size: 17px;
+      line-height: 1.47;
+      color: #6e6e73;
+      margin-bottom: 24px;
+    }
+
+    .metadata {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: #86868b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-size: 21px;
+      color: #1d1d1f;
+      font-weight: 600;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .iphone {
+        width: 667px;
+        height: 375px;
+        transform: scale(0.9);
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 40px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .iphone {
+        width: 568px;
+        height: 320px;
+        transform: scale(0.8);
+      }
+
+      .info-section {
+        margin-top: 40px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .iphone {
+        transform: scale(0.6);
+        margin: -60px 0;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .metadata {
+        gap: 20px;
+      }
+    }
+
+    /* Subtle animations */
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Loading animation for realism */
+    .loading-shimmer {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.03),
+          transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>Voice Memos</h1>
+    <p class="subtitle">Captured moments. Unfiltered creativity.</p>
+  </div>
+
+  <div class="iphone-container">
+    <div class="iphone">
+      <div class="iphone-screen">
+        <!-- Dynamic Island (notch for landscape) -->
+        <div class="dynamic-island"></div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <div class="status-time" id="currentTime">9:41</div>
+          <div class="status-icons">
+            <span class="status-icon">⚡</span>
+            <span class="status-icon">📶</span>
+            <span class="status-icon">📵</span>
+            <span class="status-icon">100%</span>
+          </div>
+        </div>
+
+        <!-- Voice Memos App Interface -->
+        <div class="app-interface">
+        <iframe width="100%" height="100%" scrolling="no" frameborder="no" allow="autoplay"
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2049446895&color=%23211717&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+          </iframe>
+          <div class="loading-shimmer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <p class="info-text">
+      Raw ideas captured in their purest form. From late-night melodies to shower acoustics,
+      every track began as a simple voice memo on this iPhone.
+    </p>
+    <div class="metadata">
+      <div class="meta-item">
+        <span class="meta-label">Recorded On</span>
+        <span class="meta-value">iPhone</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Format</span>
+        <span class="meta-value">Voice Memo</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Quality</span>
+        <span class="meta-value">Authentic</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Update time in status bar
+    function updateTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}`;
+      document.getElementById('currentTime').textContent = timeString;
+    }
+
+    updateTime();
+    setInterval(updateTime, 60000);
+
+    // Add subtle parallax effect on mouse move
+    document.addEventListener('mousemove', (e) => {
+      const iphone = document.querySelector('.iphone');
+      const x = (e.clientX - window.innerWidth / 2) / 100;
+      const y = (e.clientY - window.innerHeight / 2) / 100;
+
+      iphone.style.transform = `perspective(1000px) rotateX(${-y}deg) rotateY(${x}deg)`;
+    });
+
+    // Reset transform on mouse leave
+    document.addEventListener('mouseleave', () => {
+      const iphone = document.querySelector('.iphone');
+      iphone.style.transform = 'perspective(1000px) rotateX(2deg)';
+    });
+
+    // Add subtle floating animation to the container after load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.querySelector('.iphone-container').classList.add('float');
+      }, 1500);
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+/* Scroll Container */
+.scroll-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Infinite Grid */
+.infinite-grid {
+  position: relative;
+  width: 10000px;  /* Large enough to scroll */
+  height: 10000px; /* Large enough to scroll */
+  transform-origin: center center;
+}
+
+/* Photo Cell Base */
+.photo-cell {
+  position: absolute;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  opacity: 0;
+  animation: cellAppear 0.6s forwards;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes cellAppear {
+  to {
+    opacity: 1;
+  }
+}
+
+.photo-cell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.photo-cell:hover::before {
+  transform: translateX(100%);
+}
+
+.photo-cell:hover {
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Aspect Ratio Specific Styles */
+.aspect-square {
+  background-size: cover;
+  background-position: center center;
+}
+
+.aspect-landscape {
+  background-size: cover;
+  background-position: center center;
+}
+
+.aspect-landscape-wide {
+  background-size: cover;
+  background-position: center center;
+  /* Cinematic feel */
+}
+
+.aspect-portrait {
+  background-size: cover;
+  background-position: center top;
+}
+
+.aspect-portrait-tall {
+  background-size: cover;
+  background-position: center center;
+}
+
+.aspect-panoramic {
+  background-size: cover;
+  background-position: center center;
+  /* Ultra-wide emphasis */
+}
+
+.aspect-square-large {
+  background-size: cover;
+  background-position: center center;
+}
+
+/* Control Button */
+.control-btn {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.control-btn:hover,
+.control-btn.active {
+  background: #333;
+  color: white;
+  border-color: #333;
+}
+
+/* Zoom Overlay */
+.zoom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  cursor: zoom-out;
+  backdrop-filter: blur(10px);
+}
+
+.zoom-overlay.active {
+  display: flex;
+}
+
+.zoomed-photo {
+  max-width: 90%;
+  max-height: 90%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 80vw;
+  height: 80vh;
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Pattern Mode Effects */
+.pattern-mode .photo-cell:nth-child(3n) {
+  filter: brightness(0.9);
+}
+
+.pattern-mode .photo-cell:nth-child(5n) {
+  filter: contrast(1.2);
+}
+
+.pattern-mode .photo-cell:nth-child(7n) {
+  filter: saturate(1.5);
+}
+
+/* Loading Indicator */
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: #999;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulse 2s infinite;
+  pointer-events: none;
+  z-index: 100;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Smooth Scrolling */
+.scroll-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .size-small {
+    width: 100px;
+    height: 100px;
+  }
+
+  .size-medium {
+    width: 200px;
+    height: 100px;
+  }
+
+  .size-large {
+    width: 200px;
+    height: 200px;
+  }
+
+  .size-tall {
+    width: 100px;
+    height: 200px;
+  }
+  
+  .control-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}

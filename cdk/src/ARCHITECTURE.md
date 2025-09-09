@@ -49,18 +49,7 @@
 **Dependencies**: Foundation, Certificate, Edge Functions
 **Why separate**: Can update CDN config without touching content or functions.
 
-### 5. WAF Stack
-```
-{STACK_PREFIX}-WAF
-├── WAF WebACL
-├── Rate Limiting Rules
-├── Geo Blocking Rules
-└── Outputs: WebACLArn
-```
-
-**Why separate**: Security rules change frequently, no need to touch app.
-
-### 6. App Stack
+### 5. App Stack
 ```
 {STACK_PREFIX}-App
 ├── Content Deployment
@@ -71,7 +60,7 @@
 
 **Why separate**: Application deployments happen frequently without infrastructure changes.
 
-### 7. Monitoring Stack
+### 6. Monitoring Stack
 ```
 {STACK_PREFIX}-Monitoring
 ├── CloudWatch Dashboards
@@ -87,7 +76,6 @@
 ## Benefits of This Architecture
 
 ### 1. Independent Updates
-- Update WAF rules without touching the app
 - Change alert thresholds without redeploying
 - Modify edge functions separately from CDN
 
@@ -98,11 +86,9 @@
 
 ### 3. Safer Deletions
 - Delete monitoring without affecting app
-- Remove WAF without downtime
 - Clear dependency order
 
 ### 4. Cost Optimization
-- Delete expensive features (WAF) independently
 - Keep core app running with minimal stacks
 
 ### 5. Team Collaboration
@@ -116,7 +102,6 @@
    - Foundation Stack (S3 buckets)
    - Certificate Stack (ACM certificate)
    - Edge Functions Stack (CloudFront functions)
-   - WAF Stack (security rules)
    - CDN Stack (CloudFront distribution)
    - App Stack (content deployment)
    - Monitoring Stack (dashboards and alerts)
@@ -134,12 +119,11 @@
 
 # Core application  
 3. npm run deploy:edge
-4. npm run deploy:waf
-5. npm run deploy:cdn
-6. npm run deploy:app
+4. npm run deploy:cdn
+5. npm run deploy:app
 
 # Optional monitoring
-7. npm run deploy:monitoring -- -c notificationEmail=your@email.com
+6. npm run deploy:monitoring -- -c notificationEmail=your@email.com
 ```
 
 ## Migration Complete
@@ -147,13 +131,12 @@
 The migration from monolithic to decoupled architecture has been completed:
 
 1. **Phase 1**: ✓ Deployed all new stacks
-   - Foundation, Certificate, Edge Functions, WAF, CDN, App, Monitoring
+   - Foundation, Certificate, Edge Functions, CDN, App, Monitoring
    - All stacks are operational
 
 2. **Phase 2**: ✓ Traffic switched
    - CloudFront distribution configured with custom domains
    - Certificate attached and SSL working
-   - WAF protection active
 
 3. **Phase 3**: Template Configuration
    - Configure APP_NAME, DOMAIN_NAME, and STACK_PREFIX in environment variables
