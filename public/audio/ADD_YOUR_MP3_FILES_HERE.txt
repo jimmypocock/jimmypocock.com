@@ -1,0 +1,15 @@
+Add your MP3 files to this directory with the following filenames:
+
+1. morning-melody.mp3
+2. shower-thoughts.mp3
+3. late-night-idea.mp3
+4. coffee-shop-vibes.mp3
+5. walking-rhythm.mp3
+6. guitar-riff.mp3
+7. piano-sketch.mp3
+8. humming-harmony.mp3
+
+These files will be played by the Voice Memos player on the /voice-memos page.
+
+To customize the track list, edit the voiceMemos array in:
+/components/VoiceMemosPlayer.tsx

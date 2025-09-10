@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import VoiceMemosPlayer from '@/components/VoiceMemosPlayer'
 
 export default function VoiceMemosPage() {
   const router = useRouter()
@@ -71,16 +72,9 @@ export default function VoiceMemosPage() {
               </div>
             </div>
 
-            {/* SoundCloud Embed - Full Screen */}
-            <div className="absolute inset-0 pt-8 sm:pt-9 lg:pt-11 bg-[#1c1c1e]">
-              <iframe 
-                width="100%" 
-                height="100%" 
-                scrolling="no" 
-                frameBorder="no" 
-                allow="autoplay"
-                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/2049446895&color=%23211717&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
-              />
+            {/* Voice Memos Player - Full Screen */}
+            <div className="absolute inset-0 pt-8 sm:pt-9 lg:pt-11">
+              <VoiceMemosPlayer />
             </div>
           </div>
         </div>
